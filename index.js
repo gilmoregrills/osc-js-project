@@ -10,6 +10,9 @@ server = app.listen(port, () => {
   console.log(`Express listening on port ${port}`);
 });
 app.use(express.static("public"));
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 var getIPAddresses = function () {
   var os = require("os"),

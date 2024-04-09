@@ -1,0 +1,16 @@
+.grid-container {
+    display:block;
+}
+
+.grid-container > * {
+    padding:1rem;
+}
+
+/* tablet breakpoint */
+@media (min-width:768px) {
+    .grid-container {
+        display: grid;
+        grid-auto-rows: 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}

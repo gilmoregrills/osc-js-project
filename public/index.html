@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>osc.js Web Sockets</title>
-        <meta charset="UTF-8" />
-        <script src="./node_modules/osc/dist/osc-browser.min.js"></script>
-        <script src="./script.js"></script>
-    </head>
-    <body></body>
+  <head>
+    <title>osc.js Web Sockets</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css">
+    <script src="./node_modules/osc/dist/osc-browser.min.js"></script>
+    <script src="./script.js"></script>
+  </head>
+  <body>
+    <span>
+      <h2>raw_osc_input</h2>
+      <p id="input_receiver">awaiting input</p>
+    </span>
+    <div class="grid-container">
+      <div>
+        <h2>channel:/1</h2>
+        <p id="opt_1">opt: 1</p>
+        <p id="channel_/1">awaiting input</p>
+      </div>
+      <div>
+        <h2>channel:/2</h2>
+        <p id="opt_2">opt: 1</p>
+        <p id="channel_/2">awaiting input</p>
+      </div>
+      <div>
+        <h2>channel:/3</h2>
+        <p id="opt_3">opt: 1</p>
+        <p id="channel_/3">awaiting input</p>
+      </div>
+    </div>
+    <span>
+      <h2>channel:/0_control</h2>
+      <p id="channel_/0">awaiting input</p>
+    </span>
+
+  </body>
 </html>
