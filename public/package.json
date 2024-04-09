@@ -1,0 +1,9 @@
+{
+  "name": "public",
+  "version": "1.0.0",
+  "main": "index.html",
+  "license": "MIT",
+  "dependencies": {
+    "osc": "^2.4.4"
+  }
+}
