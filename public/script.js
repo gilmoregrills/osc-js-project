@@ -1,5 +1,5 @@
 var oscPort = new osc.WebSocketPort({
-  url: "ws://localhost:8081", // URL to your Web Socket server.
+  url: `ws://${location.hostname}:8081`, // URL to your Web Socket server.
 });
 console.log("OSC Port created");
 
