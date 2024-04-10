@@ -21,11 +21,14 @@ const renderRawInput = (oscMsg) => {
   )}_ routing args to channel_${oscMsg.address}`;
 };
 
-const sendOsc = () => {
-  console.log(`attempting to send osc message to ${oscPort.options.url}`);
+const sendOsc = (channel, args) => {
+  console.log(
+    `sending osc from frontend to backend and back again on channel: ${channel} with args: ${args}`,
+  );
+  // todo: add validation that we're receiving only numbers
   oscPort.send({
-    address: "/0",
-    args: [2, 2, 5],
+    address: channel,
+    args: args.split(" ").map(Number),
   });
 };
 
