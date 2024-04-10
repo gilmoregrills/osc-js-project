@@ -11,6 +11,38 @@
     .grid-container {
         display: grid;
         grid-auto-rows: 1fr;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
     }
+}
+
+.input {
+  align-items: right;
+  border-left: 1px solid #000;
+}
+
+.about {
+}
+
+.header {
+  width: 100%;
+  border-bottom: 1px solid #000;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    border-top: 1px solid #000;
+}
+
+.footer-content,.header-content {
+  padding: 15px;
+}
+
+form {
+    /* justify-content: center; */
+    align-items: center;
+    height: 100%;
 }

@@ -30,6 +30,8 @@ const sendOsc = (channel, args) => {
     address: channel,
     args: args.split(" ").map(Number),
   });
+  document.getElementById("sent_message").textContent =
+    `sent: {address: ${channel}, args: ${args}}`;
 };
 
 oscPort.on("message", (oscMsg) => {
