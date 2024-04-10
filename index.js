@@ -40,6 +40,7 @@ var udpPort = new osc.UDPPort({
   localPort: 57121,
   remoteAddress: "127.0.0.1",
   remotePort: 8081,
+  broadcast: true,
 });
 console.log("UDP port created on 0.0.0.0:57121");
 
@@ -81,6 +82,6 @@ wss.on("connection", function (socket) {
 
   socketPort.on("message", function (oscMsg) {
     console.log("An OSC message just arrived via WebSocket!", oscMsg);
-    socketPort.send(oscMsg);
+    udpPort.send(oscMsg, "0.0.0.0", "57121");
   });
 });
