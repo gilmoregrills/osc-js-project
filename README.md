@@ -1,6 +1,6 @@
-# osc-js-project
+# osc-chat
 
-running on rpi, but could run on a random box somewhere probably
+multiplayer osc message processor (and sender?)
 
 ## to-run
 
