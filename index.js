@@ -75,15 +75,12 @@ wss.on("connection", function (socket) {
     socket: socket,
   });
 
+  socketPort.on("message", function (oscMsg) {
+    console.log("An OSC message just arrived via WebSocket!", oscMsg);
+    socketPort.send(oscMsg);
+  });
+
   var relay = new osc.Relay(udpPort, socketPort, {
     raw: true,
   });
 });
-
-// var oscPort = new osc.WebSocketPort({
-//   url: "ws://localhost:8081", // URL to your Web Socket server.
-//   socket: wss,
-//   metadata: true,
-// });
-//
-// oscPort.open();

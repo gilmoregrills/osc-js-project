@@ -3,6 +3,9 @@ var oscPort = new osc.WebSocketPort({
 });
 console.log("OSC Port created");
 
+oscPort.open();
+console.log("OSC Port opened");
+
 const handleControlCodes = (oscMsg) => {
   document.getElementById(`opt_${oscMsg.args[0]}`).textContent =
     `opt: ${oscMsg.args[1]}`;
@@ -18,7 +21,15 @@ const renderRawInput = (oscMsg) => {
   )}_ routing args to channel_${oscMsg.address}`;
 };
 
-oscPort.on("message", function (oscMsg) {
+const sendOsc = () => {
+  console.log(`attempting to send osc message to ${oscPort.options.url}`);
+  oscPort.send({
+    address: "/0",
+    args: [2, 2, 5],
+  });
+};
+
+oscPort.on("message", (oscMsg) => {
   console.log("OSC message received:", oscMsg);
   renderRawInput(oscMsg);
 
@@ -29,6 +40,3 @@ oscPort.on("message", function (oscMsg) {
   document.getElementById(`channel_${oscMsg.address}`).textContent =
     `last_message: ${JSON.stringify(oscMsg.args)}`;
 });
-
-oscPort.open();
-console.log("OSC Port opened");
