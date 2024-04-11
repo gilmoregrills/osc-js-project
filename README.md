@@ -1,51 +1,29 @@
 # osc-chat
 
-multiplayer osc message processor (and sender?)
+multiplayer osc message processor and sender
 
-## to-run
+## running locally
 
-to start:
+```bash
+docker build -t osc-chat:latest .
+docker run -rm -it -p 8080:8080 -p 8081:8081 -p 57121:57121/udp osc-chat:latest
 ```
-node index.js
-```
-and navigate to `http://rpi.local:8080`
+then go to `http://localhost:8080` in your browser, or send OSC messages to `localhost:57121`
 
-run `orca` while SSH'd to rpi.local (or the random box) to interact, ensuring that orca is outputting to `0.0.0.0:57121`
+## deploying to aws
+
+log in to the right aws account, then run:
+
+```bash
+yarn cdk deploy
+```
 
 ## notes/gotchas
 
 ### orca-c osc message format
 
-orca-c requires that you set the length of the orca messages, so messages must look like:
+if you're using orca to send messages to osc-chat, orca-c requires that you set the length of the orca messages, so messages must look like:
+
 ```
 =<path><length><arg1><arg2>...<arg34>
-```
-
-### orca-c controls
-
-```
-┌ Controls ───────────────────────────────────────────┐
-│           Ctrl+Q  Quit                              │
-│       Arrow Keys  Move Cursor                       │
-│     Ctrl+D or F1  Open Main Menu                    │
-│   0-9, A-Z, a-z,  Insert Character                  │
-│    ! : % / = # *                                    │
-│         Spacebar  Play/Pause                        │
-│ Ctrl+Z or Ctrl+U  Undo                              │
-│           Ctrl+X  Cut                               │
-│           Ctrl+C  Copy                              │
-│           Ctrl+V  Paste                             │
-│           Ctrl+S  Save                              │
-│           Ctrl+F  Frame Step Forward                │
-│           Ctrl+R  Reset Frame Number                │
-│ Ctrl+I or Insert  Append/Overwrite Mode             │
-│        ' (quote)  Rectangle Selection Mode          │
-│ Shift+Arrow Keys  Adjust Rectangle Selection        │
-│   Alt+Arrow Keys  Slide Selection                   │
-│   ` (grave) or ~  Slide Selection Mode              │
-│           Escape  Return to Normal Mode or Deselect │
-│  ( ) _ + [ ] { }  Adjust Grid Size and Rulers       │
-│          < and >  Adjust BPM                        │
-│                ?  Controls (this message)           │
-└─────────────────────────────────────────────────────┘
 ```

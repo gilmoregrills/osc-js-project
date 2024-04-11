@@ -9,7 +9,7 @@ const port = 8080;
 server = app.listen(port, () => {
   console.log(`Express listening on port ${port}`);
 });
-app.use(express.static("public"));
+app.use(express.static("src/public"));
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
