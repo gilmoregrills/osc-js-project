@@ -11,8 +11,12 @@
     <div class="header">
       <div class="grid-container">
         <div class="about">
-          <h2>about</h2>
-          <p>todo: add about lol</p>
+          <p>osc-chat is a multiplayer OSC message receiver and sender</p>
+          <p>send OSC messages to port 57121, via the api, or using the form below to interact</p>
+          <span>
+            <a href="/spec">osc msg spec</a>
+            <a href="/api">api docs</a>
+          </span>
         </div>
         <div class="input">
           <h2>raw_osc_input</h2>
@@ -47,8 +51,7 @@
     <div class="footer">
       <div class="footer-content">
       <h2>broadcast:OSC</h2>
-      <p>send OSC message to all clients, select a channel and enter your args</p>
-      <p>args must be space-spaced integers</p>
+      <p>send OSC message to all clients, select a channel and enter args as space-spaced integers</p>
       <form action="javascript:;" onsubmit="sendOsc(this.channel.value, this.args.value)">
         <input type="radio" id="channel0" name="channel" value="/0">
         <label for="channel0">channel:/0 </label><br>

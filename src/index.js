@@ -2,6 +2,8 @@ const osc = require("osc");
 const express = require("express");
 const WebSocket = require("ws");
 const os = require("os");
+const marked = require("marked");
+const readFileSync = require("fs").readFileSync;
 
 // express
 const app = express();
@@ -12,6 +14,18 @@ server = app.listen(port, () => {
 app.use(express.static("src/public"));
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
+});
+
+app.get("/spec", (req, res) => {
+  var path = __dirname + "/doc/spec.md";
+  var file = readFileSync(path, "utf8");
+  res.send(marked.parse(file.toString()));
+});
+
+app.get("/api", (req, res) => {
+  var path = __dirname + "/doc/api.md";
+  var file = readFileSync(path, "utf8");
+  res.send(marked.parse(file.toString()));
 });
 
 const getIPAddresses = () => {
