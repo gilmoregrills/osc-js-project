@@ -22,6 +22,13 @@ write_files:
                 proxy_set_header Host $host;
                 proxy_cache_bypass $http_upgrade;
             }
+            location /ws {
+                proxy_pass http://localhost:8081;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_read_timeout 86400;
+            }
         }
     }
 
@@ -36,9 +43,9 @@ packages:
 runcmd:
 - sudo service docker start
 - sudo service nginx start
-- sudo aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 553762194992.dkr.ecr.eu-west-2.amazonaws.com
-- sudo docker run -d -p 8080:8080 -p 8081:8081 -p 57121:57121/udp ${docker_image}
 - sudo /usr/bin/python3 -m pip install --upgrade pip
 - sudo /usr/bin/python3 -m pip install certbot certbot-nginx certbot-dns-route53
-- sudo /usr/local/bin/certbot --nginx --non-interactive --agree-tos --email ${email} -d ${domain}
+- sudo /usr/local/bin/certbot --nginx --non-interactive --agree-tos --email robinyonge@hey.com -d ${domain}
+- sudo aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 553762194992.dkr.ecr.eu-west-2.amazonaws.com
+- sudo docker run -d -p 8080:8080 -p 8081:8081 -p 57121:57121/udp ${docker_image}
 # - echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
