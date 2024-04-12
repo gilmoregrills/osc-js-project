@@ -39,6 +39,7 @@ const sendOsc = (channel, args) => {
     `sent: {address: ${channel}, args: ${args}}`;
 };
 
+// this is like our main function
 oscPort.on("message", (oscMsg) => {
   console.log("OSC message received:", oscMsg);
   renderRawInput(oscMsg);

@@ -1,9 +1,9 @@
-const osc = require("osc"),
-  express = require("express"),
-  WebSocket = require("ws");
+const osc = require("osc");
+const express = require("express");
+const WebSocket = require("ws");
+const os = require("os");
 
-// Create an Express server app
-// and serve up a directory of static files.
+// express
 const app = express();
 const port = 8080;
 server = app.listen(port, () => {
@@ -14,10 +14,9 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
 });
 
-var getIPAddresses = function () {
-  var os = require("os"),
-    interfaces = os.networkInterfaces(),
-    ipAddresses = [];
+const getIPAddresses = () => {
+  const interfaces = os.networkInterfaces();
+  var ipAddresses = [];
 
   for (var deviceName in interfaces) {
     var addresses = interfaces[deviceName];
@@ -34,8 +33,8 @@ var getIPAddresses = function () {
   return ipAddresses;
 };
 
-// Create an osc.js UDP Port listening on port 57121.
-var udpPort = new osc.UDPPort({
+// create UDPPort
+const udpPort = new osc.UDPPort({
   localAddress: "0.0.0.0",
   localPort: 57121,
   remoteAddress: "127.0.0.1",
@@ -44,14 +43,13 @@ var udpPort = new osc.UDPPort({
 });
 console.log("UDP port created on 0.0.0.0:57121");
 
-// Listen for incoming OSC messages.
-udpPort.on("message", function (oscMsg, timeTag, info) {
+udpPort.on("message", (oscMsg, timeTag, info) => {
   console.log("An OSC message just arrived via UDP!", oscMsg);
   console.log("Remote info is: ", info);
 });
 
-udpPort.on("ready", function () {
-  var ipAddresses = getIPAddresses();
+udpPort.on("ready", () => {
+  const ipAddresses = getIPAddresses();
   console.log("Listening for OSC over UDP.");
   ipAddresses.forEach(function (address) {
     console.log(" Host:", address + ", Port:", udpPort.options.localPort);
@@ -66,11 +64,11 @@ udpPort.on("ready", function () {
 // Open the socket.
 udpPort.open();
 
-var wss = new WebSocket.Server({
+const wss = new WebSocket.Server({
   port: 8081,
 });
 
-wss.on("connection", function (socket) {
+wss.on("connection", (socket) => {
   console.log("A Web Socket connection has been established!");
   var socketPort = new osc.WebSocketPort({
     socket: socket,
@@ -80,7 +78,7 @@ wss.on("connection", function (socket) {
     raw: true,
   });
 
-  socketPort.on("message", function (oscMsg) {
+  socketPort.on("message", (oscMsg) => {
     console.log("An OSC message just arrived via WebSocket!", oscMsg);
     udpPort.send(oscMsg, "0.0.0.0", "57121");
   });
