@@ -1,0 +1,52 @@
+#cloud-config
+repo_update: true
+repo_upgrade: all
+ssh_authorized_keys:
+- ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCqlMvhiFPLZW8PFpEvPCyxE5tS1uE8WBjOFFq7RZqqskjypfT+FFWX7WkArVgG42wztBdpHJFy9uialL7dfW91EufszQ47NxGUsDeeE51sHYJQIbGh/Ouc60by+5cBG3qyuQ7UIOtRqXgPcHwJry+QbF2255bO9WOJQ/4R0QtMoe3UOV7Qca/XMVAme6XieLwFvJc23hYoKd/YGTuwTI8bogEYZpERgQFjonRpw8zhLC9XKf5tpWDAeUc0jwD/E7YQblQej9dDWGEh2LZL3c6Yo3GZpx39NrFwm0EO2YADiZvxJZzi63WZ37L0sxi3IqrQbYgt+7fAnicKmkZkERR
+
+write_files:
+- path: /etc/nginx/nginx.conf
+  permissions: 0644
+  owner: root:root
+  content: |
+    events {}
+    http {
+        server {
+            listen 80;
+            listen [::]:80;
+            server_name  ${domain};
+            location / {
+                proxy_pass http://localhost:8080;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+            }
+            location /ws {
+                proxy_pass http://localhost:8081;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+                proxy_read_timeout 86400;
+            }
+        }
+    }
+
+packages:
+- docker
+- nginx
+- yum-utils
+- augeas-libs
+- python38
+- python38-devel
+
+runcmd:
+- sudo service docker start
+- sudo service nginx start
+- sudo /usr/bin/python3 -m pip install --upgrade pip
+- sudo /usr/bin/python3 -m pip install certbot certbot-nginx certbot-dns-route53
+- sudo /usr/local/bin/certbot --test-cert --nginx --non-interactive --agree-tos --email robinyonge@hey.com -d ${domain}
+- sudo aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 553762194992.dkr.ecr.eu-west-2.amazonaws.com
+- sudo docker run -d -p 8080:8080 -p 8081:8081 -p 57121:57121/udp ${docker_image}
+- echo "0 0,12 * * * root /usr/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null

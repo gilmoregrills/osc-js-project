@@ -4,7 +4,6 @@
   "main": "index.html",
   "license": "MIT",
   "dependencies": {
-    "osc": "^2.4.4",
-    "ws": "^8.16.0"
+    "osc": "^2.4.4"
   }
 }

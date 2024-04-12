@@ -1,0 +1,11 @@
+{
+  "availability-zones:account=553762194992:region=eu-west-2": [
+    "eu-west-2a",
+    "eu-west-2b",
+    "eu-west-2c"
+  ],
+  "hosted-zone:account=553762194992:domainName=eelgirl.biz:region=eu-west-2": {
+    "Id": "/hostedzone/Z0596690WXL2AETOSIDZ",
+    "Name": "eelgirl.biz."
+  }
+}

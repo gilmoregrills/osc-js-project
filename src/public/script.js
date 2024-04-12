@@ -1,10 +1,15 @@
+const wsUrl =
+  location.host == "localhost:8080"
+    ? "ws://localhost:8081"
+    : `wss://${location.host}/ws`;
+
 var oscPort = new osc.WebSocketPort({
-  url: `ws://${location.hostname}:8081`, // URL to your Web Socket server.
+  url: wsUrl,
 });
-console.log("OSC Port created");
+console.log(`OSC WebSocketPort created on ${wsUrl}`);
 
 oscPort.open();
-console.log("OSC Port opened");
+console.log("OSC WebSocketPort opened");
 
 const handleControlCodes = (oscMsg) => {
   document.getElementById(`opt_${oscMsg.args[0]}`).textContent =
@@ -34,6 +39,7 @@ const sendOsc = (channel, args) => {
     `sent: {address: ${channel}, args: ${args}}`;
 };
 
+// this is like our main function
 oscPort.on("message", (oscMsg) => {
   console.log("OSC message received:", oscMsg);
   renderRawInput(oscMsg);
