@@ -11,28 +11,24 @@ console.log(`OSC WebSocketPort created on ${wsUrl}`);
 oscPort.open();
 console.log("OSC WebSocketPort opened");
 
-var messageLog = [];
-
-const updateRawInput = (oscMsg) => {
-  document.getElementById("input_receiver").textContent = `${JSON.stringify(
-    oscMsg,
-    null,
-    2,
-  )}_ routing args to channel_${oscMsg.address}`;
-};
+document.getElementById("unmute")?.addEventListener("click", async () => {
+  console.log("Starting audio context.");
+  await Tone.start();
+  console.log("Audio context is ready.");
+});
 
 const updateLastMessageForChannel = (oscMsg) => {
   document.getElementById(`channel_${oscMsg.address}`).textContent =
     `last_message: ${JSON.stringify(oscMsg.args)}`;
 };
 
+var messageLog = [];
 const updateMessageLog = (oscMsg) => {
   messageLog.push(JSON.stringify(oscMsg));
   if (messageLog.length > 6) {
     messageLog.shift();
   }
   const result = messageLog.map((val) => `<p>${val}</p>`).join("");
-  console.log(result);
   document.getElementById("log-messages").innerHTML = result;
 };
 
@@ -62,9 +58,6 @@ const handleSynthChannel = (oscMsg) => {
 
 // this is like our main function
 oscPort.on("message", (oscMsg) => {
-  console.log("OSC message received:", oscMsg);
-  updateRawInput(oscMsg);
-
   console.log(`channel: ${oscMsg.address}`);
   if (oscMsg.address === "/0") {
     console.log("Routing message to control channel");

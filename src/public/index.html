@@ -6,9 +6,6 @@
     <link rel="stylesheet" href="style.css">
     <script src="node_modules/osc/dist/osc-browser.min.js"></script>
     <script src="node_modules/tone/build/Tone.js"></script>
-    <script src="handlers.js"></script>
-    <script src="broadcast.js"></script>
-    <script src="main.js"></script>
   </head>
   <body>
     <div class="header">
@@ -23,8 +20,8 @@
             </span>
           </div>
           <div class="input">
-            <h2>raw_osc_input</h2>
-            <p id="input_receiver">awaiting input</p>
+            <h2>controls</h2>
+            <button id="unmute">un-mute</button>
           </div>
         </div>
       </div>
@@ -84,5 +81,6 @@
         </div>
       </div>
     </div>
+    <script src="main.js"></script>
   </body>
 </html>
