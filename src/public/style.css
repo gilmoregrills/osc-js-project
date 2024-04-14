@@ -15,6 +15,11 @@
     }
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .input {
   align-items: right;
   border-left: 1px solid #000;
@@ -23,13 +28,23 @@
 .about {
 }
 
+.broadcast {
+  align-items: left;
+  border-right: 1px solid #000;
+}
+
 .header {
   width: 100%;
+  margin: 0px;
+  padding: 0px;
+  border-left: 0px solid #000;
+  border-right: 0px solid #000;
+  border-top: 0px solid #000;
   border-bottom: 1px solid #000;
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     z-index: 10;
@@ -38,7 +53,7 @@
 }
 
 .footer-content,.header-content {
-  padding: 15px;
+  padding: 0px;
 }
 
 form {
