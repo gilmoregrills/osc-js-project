@@ -77,9 +77,6 @@
             <p id="sent_message">...</p>
           </div>
           <div class="log">
-            <h2>log</h2>
-            <div id="log-messages" class="log-messages">
-            </div>
           </div>
         </div>
       </div>
