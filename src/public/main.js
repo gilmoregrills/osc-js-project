@@ -16,9 +16,6 @@ document.getElementById("start")?.addEventListener("click", async () => {
   console.log("OSC WebSocketPort opened");
 });
 
-const basicSynth = new Tone.Synth().toDestination();
-const now = Tone.now();
-
 const updateLastMessageForChannel = (oscMsg) => {
   document.getElementById(`channel_${oscMsg.address}`).textContent =
     `last_message: ${JSON.stringify(oscMsg.args)}`;
@@ -81,6 +78,9 @@ const handleSynthChannel = (oscMsg) => {
   if (oscMsg.address === "/1") {
     // todo: use oscMsg.args[0] to set the synth voice
     console.log(`triggering note: ${note} at time: ${time}`);
+
+    const basicSynth = new Tone.Synth().toDestination();
+    const now = Tone.now();
     basicSynth.triggerAttackRelease(note, time, now);
   }
 };
