@@ -8,14 +8,16 @@ var oscPort = new osc.WebSocketPort({
 });
 console.log(`OSC WebSocketPort created on ${wsUrl}`);
 
-oscPort.open();
-console.log("OSC WebSocketPort opened");
-
-document.getElementById("unmute")?.addEventListener("click", async () => {
+document.getElementById("start")?.addEventListener("click", async () => {
   console.log("Starting audio context.");
   await Tone.start();
   console.log("Audio context is ready.");
+  oscPort.open();
+  console.log("OSC WebSocketPort opened");
 });
+
+const basicSynth = new Tone.Synth().toDestination();
+const now = Tone.now();
 
 const updateLastMessageForChannel = (oscMsg) => {
   document.getElementById(`channel_${oscMsg.address}`).textContent =
@@ -52,8 +54,35 @@ const handleControlChannel = (oscMsg) => {
     `set:channel:/${oscMsg.args[0]}.opt to: ${oscMsg.args[1]}`;
 };
 
+const convertIntsToPitchOctave = (pitch, octave) => {
+  const pitchMap = {
+    1: "C",
+    2: "C#",
+    3: "D",
+    4: "D#",
+    5: "E",
+    6: "F",
+    7: "F#",
+    8: "G",
+    9: "G#",
+    10: "A",
+    11: "A#",
+    12: "B",
+  };
+  return `${pitchMap[pitch]}${octave}`;
+};
+
 const handleSynthChannel = (oscMsg) => {
   console.log(`receiving message for synth channel: ${oscMsg.address}`);
+  const note = convertIntsToPitchOctave(oscMsg.args[1], oscMsg.args[2]);
+  const time = Tone.Time(oscMsg.args[3] / 10).toNotation();
+
+  // if message is for channel 1, trigger a synth
+  if (oscMsg.address === "/1") {
+    // todo: use oscMsg.args[0] to set the synth voice
+    console.log(`triggering note: ${note} at time: ${time}`);
+    basicSynth.triggerAttackRelease(note, time, now);
+  }
 };
 
 // this is like our main function

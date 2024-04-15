@@ -49,26 +49,6 @@ app.post("/api/send-message", (req, res) => {
   );
 });
 
-// UDPPort config
-// const getIPAddresses = () => {
-//   const interfaces = os.networkInterfaces();
-//   var ipAddresses = [];
-//
-//   for (var deviceName in interfaces) {
-//     var addresses = interfaces[deviceName];
-//
-//     for (var i = 0; i < addresses.length; i++) {
-//       var addressInfo = addresses[i];
-//
-//       if (addressInfo.family === "IPv4" && !addressInfo.internal) {
-//         ipAddresses.push(addressInfo.address);
-//       }
-//     }
-//   }
-//
-//   return ipAddresses;
-// };
-
 const udpPort = new osc.UDPPort({
   localAddress: "0.0.0.0",
   localPort: 57121,
@@ -86,11 +66,6 @@ udpPort.on("message", (oscMsg, timeTag, info) => {
 });
 
 udpPort.on("ready", () => {
-  // const ipAddresses = getIPAddresses();
-  //   console.log("Listening for OSC over UDP.");
-  // ipAddresses.forEach(function (address) {
-  // console.log(" Host:", address + ", Port:", udpPort.options.localPort);
-  // });
   console.log(
     "Broadcasting OSC over UDP to",
     udpPort.options.remoteAddress + ", Port:",
