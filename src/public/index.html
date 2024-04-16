@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>osc-chat</title>
+    <title>osc-chat | robin lightfoot</title>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="style.css">
     <script src="node_modules/osc/dist/osc-browser.min.js"></script>
-    <script src="handlers.js"></script>
-    <script src="broadcast.js"></script>
-    <script src="main.js"></script>
+    <script src="node_modules/tone/build/Tone.js"></script>
   </head>
   <body>
     <div class="header">
@@ -15,15 +13,14 @@
         <div class="grid-container">
           <div class="about">
             <p>osc-chat is a multiplayer OSC message receiver and sender</p>
+            <p>
+              <button id="start">start</button> the audio engine and open the websocket
+            </p>
             <p>send OSC messages to port 57121, via the api, or using the form below to interact</p>
-            <span>
-              <a href="/spec">osc msg spec</a>
-              <a href="/api">api docs</a>
-            </span>
+            <p><a href="/spec">osc msg spec</a></p>
+            <p><a href="/api">api docs</a></p>
           </div>
           <div class="input">
-            <h2>raw_osc_input</h2>
-            <p id="input_receiver">awaiting input</p>
           </div>
         </div>
       </div>
@@ -33,7 +30,6 @@
         <div>
           <h2>channel:/0_control</h2>
           <p id="channel_/0">awaiting input</p>
-          <p id="set_opt">awaiting input</p>
         </div>
         <div>
           <h2>channel:/1</h2>
@@ -75,8 +71,14 @@
             </form>
             <p id="sent_message">...</p>
           </div>
+          <div class="log">
+            <h2>log</h2>
+            <div id="log-messages" class="log-messages">
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <script src="main.js"></script>
   </body>
 </html>

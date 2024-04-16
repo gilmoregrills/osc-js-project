@@ -4,6 +4,7 @@
   "main": "index.html",
   "license": "MIT",
   "dependencies": {
-    "osc": "^2.4.4"
+    "osc": "^2.4.4",
+    "tone": "^14.7.77"
   }
 }
