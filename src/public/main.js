@@ -16,9 +16,8 @@ document.getElementById("start")?.addEventListener("click", async () => {
   console.log("OSC WebSocketPort opened");
 });
 
-const updateLastMessageForChannel = (oscMsg) => {
-  document.getElementById(`channel_${oscMsg.address}`).textContent =
-    `last_message: ${JSON.stringify(oscMsg.args)}`;
+const updateLastMessageForChannel = (channel, message) => {
+  document.getElementById(`channel_${channel}`).textContent = message;
 };
 
 var messageLog = [];
@@ -47,8 +46,7 @@ const sendOsc = (channel, args) => {
 const handleControlChannel = (oscMsg) => {
   document.getElementById(`opt_${oscMsg.args[0]}`).textContent =
     `opt: ${oscMsg.args[1]}`;
-  document.getElementById("set_opt").textContent =
-    `set:channel:/${oscMsg.args[0]}.opt to: ${oscMsg.args[1]}`;
+  return `set:channel:/${oscMsg.args[0]}.opt to: ${oscMsg.args[1]}`;
 };
 
 const convertIntsToPitchOctave = (pitch, octave) => {
@@ -70,32 +68,34 @@ const convertIntsToPitchOctave = (pitch, octave) => {
 };
 
 const handleSynthChannel = (oscMsg) => {
-  console.log(`receiving message for synth channel: ${oscMsg.address}`);
-  const note = convertIntsToPitchOctave(oscMsg.args[1], oscMsg.args[2]);
-  const time = Tone.Time(oscMsg.args[3] / 10).toNotation();
+  const note = convertIntsToPitchOctave(oscMsg.args[0], oscMsg.args[1]);
+  const duration = Tone.Time(oscMsg.args[2] / 10).toNotation();
 
-  // if message is for channel 1, trigger a synth
   if (oscMsg.address === "/1") {
-    // todo: use oscMsg.args[0] to set the synth voice
-    console.log(`triggering note: ${note} at time: ${time}`);
-
-    const basicSynth = new Tone.Synth().toDestination();
+    const oscSynth = new Tone.Synth().toDestination();
     const now = Tone.now();
-    basicSynth.triggerAttackRelease(note, time, now);
+    oscSynth.triggerAttackRelease(note, duration, now);
+  } else if (oscMsg.address === "/2") {
+    const membraneSynth = new Tone.MembraneSynth().toDestination();
+    const now = Tone.now();
+    membraneSynth.triggerAttackRelease(note, duration, now);
+  } else if (oscMsg.address === "/3") {
+    return "channel not yet implemented";
   }
+
+  return `received: [${oscMsg.args}] played: ${note} for: ${duration}`;
 };
 
 // this is like our main function
 oscPort.on("message", (oscMsg) => {
-  console.log(`channel: ${oscMsg.address}`);
+  console.log(`channel: ${oscMsg.address}, args: ${oscMsg.args}`);
+  var logMsg;
   if (oscMsg.address === "/0") {
-    console.log("Routing message to control channel");
-    handleControlChannel(oscMsg);
+    logMsg = handleControlChannel(oscMsg);
   } else {
-    console.log("Routing message to synth channel");
-    handleSynthChannel(oscMsg);
+    logMsg = handleSynthChannel(oscMsg);
   }
 
-  updateLastMessageForChannel(oscMsg);
+  updateLastMessageForChannel(oscMsg.address, logMsg);
   updateMessageLog(oscMsg);
 });
