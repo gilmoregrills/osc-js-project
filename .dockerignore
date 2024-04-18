@@ -1,7 +1,10 @@
 node_modules
 .git
-cdk
+cdk.out
 */*/node_modules
 test
 jest.config.js
 *.md
+src
+bin
+lib
