@@ -29,9 +29,11 @@ yarn run start
 ### with docker
 
 ```bash
-yarn run
-docker run -rm -it -p 8080:8080 -p 8081:8081 -p 57121:57121/udp osc-chat:latest
+yarn run build:docker
+yarn run start:docker
 ```
+
+
 then go to `http://localhost:8080` in your browser, or send OSC messages to `localhost:57121`
 
 ## deploying to aws
