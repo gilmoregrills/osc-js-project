@@ -1,4 +1,4 @@
-import { WebSocketPort } from "osc";
+import { WebSocketPort } from "osc/dist/osc-browser";
 import { Synth, MembraneSynth, Time, now, start } from "tone";
 
 const wsUrl =
@@ -11,13 +11,15 @@ var oscPort = new WebSocketPort({
 });
 console.log(`OSC WebSocketPort created on ${wsUrl}`);
 
-document.getElementById("start")?.addEventListener("click", async () => {
-  console.log("Starting audio context.");
-  await start();
-  console.log("Audio context is ready.");
-  oscPort.open();
-  console.log("OSC WebSocketPort opened");
-});
+document
+  .getElementById("engine-start-button")
+  ?.addEventListener("click", async () => {
+    console.log("Starting audio context.");
+    await start();
+    console.log("Audio context is ready.");
+    oscPort.open();
+    console.log("OSC WebSocketPort opened");
+  });
 
 const updateLastMessageForChannel = (channel, message) => {
   document.getElementById(`channel_${channel}`).textContent = message;
