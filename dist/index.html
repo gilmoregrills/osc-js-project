@@ -24,26 +24,7 @@
       </div>
     </div>
     <div class="channels">
-      <div class="grid-container">
-        <div>
-          <h2>channel:/0_control</h2>
-          <p id="channel_/0">awaiting input</p>
-        </div>
-        <div>
-          <h2>channel:/1</h2>
-          <p id="opt_1">opt: 1</p>
-          <p id="channel_/1">awaiting input</p>
-        </div>
-        <div>
-          <h2>channel:/2</h2>
-          <p id="opt_2">opt: 1</p>
-          <p id="channel_/2">awaiting input</p>
-        </div>
-        <div>
-          <h2>channel:/3</h2>
-          <p id="opt_3">opt: 1</p>
-          <p id="channel_/3">awaiting input</p>
-        </div>
+      <div class="grid-container" id="channel-container">
       </div>
     </div>
 
@@ -54,7 +35,7 @@
           <div class="broadcast">
             <h2>broadcast:OSC</h2>
             <p>send OSC message to all clients, select a channel and enter args as space-spaced integers</p>
-            <form action="javascript:;" onsubmit="sendOsc(this.channel.value, this.args.value)">
+            <form id="broadcast-form" method="javascript:;">
               <input type="radio" id="channel0" name="channel" value="/0">
               <label for="channel0">channel:/0 </label><br>
               <input type="radio" id="channel1" name="channel" value="/1">
