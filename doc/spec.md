@@ -17,7 +17,7 @@ The args field is always an array of ints, which are interpreted in different wa
 
 ## channel 0
 
-Channel 0 accepts messages that modify settings on other channels.
+Channel 0 is always a control channel that accepts messages that modify settings on other channels.
 
 Channel 0 is controlled by sending messages to the address 0. Channel settings modified using channel 0 will apply to all messages sent to the modified channel until the settings are changed again.
 
@@ -91,7 +91,9 @@ Each option is set to the value passed to that argument, divided by 10.
 
 Channels 1 and up are controlled by sending messages to the address that corresponds with the channel number.
 
-Channels are initialised with a voice, visible in the column for that channel, which can be changed by sending a message to channel 0 as described above.
+### synth/instrument channels
+
+Instrument channels are initialised with a voice, visible in the column for that channel, which can be changed by sending a message to channel 0 as described above.
 
 For each of these channels, the args are interpreted as follows:
 
