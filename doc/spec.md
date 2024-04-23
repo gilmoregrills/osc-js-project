@@ -21,27 +21,71 @@ Channel 0 accepts messages that modify settings on other channels.
 
 Channel 0 is controlled by sending messages to the address 0. Channel settings modified using channel 0 will apply to all messages sent to the modified channel until the settings are changed again.
 
-| arg index | description                                           |
-|-----------|-------------------------------------------------------|
-| 0         | selects the channel you want to modify attributes for |
-| 1         | sets the channel's voice                              |
-
-### voice selection
-
-| arg value | instrument      |
-|-----------|---------------- |
-| 1         | basic synth     |
-| 2         | membrane synth  |
+| arg index | description                                                              |
+|-----------|--------------------------------------------------------------------------|
+| 0         | selects the channel you want to modify attributes for                    |
+| 1         | selects the option group you want to modify                              |
+| 2 ... 35  | changes settings depending on the option group type                      |
 
 ### example
 
-This sets the opt parameter of channel 1 to 5.
+This updates a voice option group (labeled as option group 1) on channel 1 (an instrument channel) to `2`, which maps to the "membrane synth" option as documented below.
 ```json
 {
   'address': 0,
-  'args': [1, 5]
+  'args': [1, 1, 2]
 }
 ```
+
+### option groups
+
+Option groups' settings are set depending on the values of arguments of index 2 and up. As such, the tables in this section will all go from arg index 2.
+
+Each channel will display its current settings, grouped by option groups. So for example if channel 1 is an instrument channel, it might have a voice selection option group, to change the voice of the instrument check the section about that option group below.
+
+#### voice
+
+| arg index | arg value | instrument      |
+|-----------|-----------|---------------- |
+| 2         | 1         | basic synth     |
+|           | 2         | membrane synth  |
+
+##### example
+
+`[y, x, 2]` to channel 0 will update the voice option group at `x` for channel `y` setting the voice to "membrane synth".
+
+#### waveform
+
+The waveform option group is used to change the waveform of the oscillator, setting it to "<waveform><partial>".
+
+| arg index | sets     | arg value | value    |
+|-----------|----------|-----------|----------|
+| 2         | waveform | 1         | sine     |
+|           |          | 2         | square   |
+|           |          | 3         | sawtooth |
+|           |          | 4         | triangle |
+| 3         | partial  | 1 - 32    | 1 - 32   |
+
+##### example
+
+`[y, x, 1, 8]` to channel 0 will update the waveform option group at `x` for channel `y` setting the waveform to "sine8".
+
+#### envelope
+
+Sets the attack, decay, sustain, and release of the envelope attached to this option group.
+
+Each option is set to the value passed to that argument, divided by 10.
+
+| arg index | sets     | arg value | value            |
+|-----------|----------|-----------|------------------|
+| 2         | attack   | 1 - 35    | <arg value> / 10 |
+| 3         | decay    | 1 - 35    | <arg value> / 10 |
+| 4         | sustain  | 1 - 35    | <arg value> / 10 |
+| 5         | release  | 1 - 35    | <arg value> / 10 |
+
+##### example
+
+`[y, x, 1, 5, 20, 30, 40]` would update the envelope option group at `x` for channel `y`, setting the envelope to attack 0.5s, decay 2s, sustain 3s, and release 4s.
 
 ## channels 1+
 
