@@ -43,6 +43,19 @@ Option groups' settings are set depending on the values of arguments of index 2 
 
 Each channel will display its current settings, grouped by option groups. So for example if channel 1 is an instrument channel, it might have a voice selection option group, to change the voice of the instrument check the section about that option group below.
 
+#### volume
+
+Sets the volume of the channel, in decibels. The level is set -`<arg value>`, so the highest volume can be is 0.
+
+| arg index | sets     | arg value | value    |
+|-----------|----------|-----------|----------|
+| 2         | volume   | 0 - 35    | sine     |
+
+##### example
+
+`[y, x, 10]` to channel 0 will update the volume option group at `x` for channel `y` setting the volume to -10dB.
+
+
 #### voice
 
 | arg index | arg value | instrument      |

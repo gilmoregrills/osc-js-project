@@ -9,7 +9,7 @@ multiplayer osc message processor and sender
 - [x] use webpack so i can structure my frontend code more nicely
 - [x] model and load channels in a way that's more maintainable and makes adding channels easier
 - [x] add some basic channel settings and ensure they're extensible
-- [ ] add per-channel volume control
+- [x] add per-channel volume control
 - [ ] add effects to channels, or a way of adding/confguring effects
 - [ ] start persisting channel config to a db (must be done entirely server-side) and loading from it on startup
 - [ ] start persisting all OSC message logs, displaying the 5 most recent and making the full/most recent tail available on /logs
