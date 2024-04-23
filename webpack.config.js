@@ -1,8 +1,11 @@
 const path = require("path");
 
-module.exports = {
+var config = {
   entry: "./src/index.js",
-  watch: true,
+  watch: false,
+  optimization: {
+    minimize: true,
+  },
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -16,4 +19,13 @@ module.exports = {
       // and also other packages that are not found
     },
   },
+};
+
+module.exports = (env, argv) => {
+  if (argv.mode === "development") {
+    config.watch = true;
+    config.optimization.minimize = false;
+  }
+
+  return config;
 };

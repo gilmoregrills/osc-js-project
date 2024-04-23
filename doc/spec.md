@@ -19,12 +19,19 @@ The args field is always an array of ints, which are interpreted in different wa
 
 Channel 0 accepts messages that modify settings on other channels.
 
-Channel 0 is controlled by sending messages to the address 0.
+Channel 0 is controlled by sending messages to the address 0. Channel settings modified using channel 0 will apply to all messages sent to the modified channel until the settings are changed again.
 
 | arg index | description                                           |
 |-----------|-------------------------------------------------------|
 | 0         | selects the channel you want to modify attributes for |
-| 1         | sets the `opt` parameter's value                      |
+| 1         | sets the channel's voice                              |
+
+### voice selection
+
+| arg value | instrument      |
+|-----------|---------------- |
+| 1         | basic synth     |
+| 2         | membrane synth  |
 
 ### example
 
@@ -40,12 +47,7 @@ This sets the opt parameter of channel 1 to 5.
 
 Channels 1 and up are controlled by sending messages to the address that corresponds with the channel number.
 
-Currently channels 1+ play tones from different instruments:
-
-| channel | instrument      |
-|---------|---------------- |
-| 1       | basic synth     |
-| 2       | membrane synth  |
+Channels are initialised with a voice, visible in the column for that channel, which can be changed by sending a message to channel 0 as described above.
 
 For each of these channels, the args are interpreted as follows:
 
