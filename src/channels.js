@@ -11,7 +11,12 @@ class Channel {
   constructor(address) {
     this.address = address;
     this.channelType = "generic";
+    this.volume = -8;
     this.lastMessageDescription = "awaiting input";
+  }
+
+  setVolume(vol) {
+    this.volume = -vol;
   }
 
   generateInnerHTML() {
@@ -80,7 +85,9 @@ class InstrumentChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
-      <h3>opt_group(1): voice</h3>
+      <h3>opt_group(1): vol</h3>
+      <p id="vol_${this.address}">volume: ${this.volume}dB</p>
+      <h3>opt_group(2): voice</h3>
       <p id="voice_${this.address}">voice: ${this.voiceName}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
@@ -97,7 +104,7 @@ class InstrumentChannel extends Channel {
     const note = convertIntsToPitchOctave(oscMsg.args[0], oscMsg.args[1]);
     const duration = Time(oscMsg.args[2] / 10).toNotation();
 
-    const oscSynth = new this.voice().toDestination();
+    const oscSynth = new this.voice({ volume: this.volume }).toDestination();
     oscSynth.triggerAttackRelease(note, duration);
 
     this.updateLastMessageDescription(oscMsg, note, duration);
@@ -156,9 +163,11 @@ class SynthChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
-      <h3>opt_group(1): waveform</h3>
+      <h3>opt_group(1): vol</h3>
+      <p id="vol_${this.address}">volume: ${this.volume}dB</p>
+      <h3>opt_group(2): waveform</h3>
       <p id="waveform_${this.address}">waveform: ${this.waveform}</p>
-      <h3>opt_group(2): envelope</h3>
+      <h3>opt_group(3): envelope</h3>
       <p id="amplitude_envelope_${this.address}">amplitude envelope: ${JSON.stringify(this.amplitudeEnvelopeArgs)}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
@@ -180,6 +189,7 @@ class SynthChannel extends Channel {
     ).toDestination();
 
     const osc = new Oscillator({
+      volume: this.volume,
       frequency: note,
       type: this.waveform,
     })
@@ -222,6 +232,10 @@ class ControlChannel extends Channel {
     if (channel instanceof InstrumentChannel) {
       switch (oscMsg.args[1]) {
         case 1:
+          channel.setVolume(oscMsg.args[2]);
+          actionMessage = `volume: ${channel.volume}`;
+          break;
+        case 2:
           channel.setVoice(oscMsg.args[2]);
           actionMessage = `voice: ${channel.voiceName}`;
           break;
@@ -231,10 +245,14 @@ class ControlChannel extends Channel {
     } else if (channel instanceof SynthChannel) {
       switch (oscMsg.args[1]) {
         case 1:
+          channel.setVolume(oscMsg.args[2]);
+          actionMessage = `volume: ${channel.volume}`;
+          break;
+        case 2:
           channel.setWaveformAndPartial(oscMsg.args[2], oscMsg.args[3]);
           actionMessage = `waveform: ${channel.waveform}`;
           break;
-        case 2:
+        case 3:
           channel.setAmplitudeEnvelope(
             oscMsg.args[2],
             oscMsg.args[3],
