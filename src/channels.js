@@ -57,10 +57,30 @@ class InstrumentChannel extends Channel {
     this.lastMessageDescription = "awaiting input";
   }
 
+  setVoice(arg) {
+    const [voiceName, voice] = this.mapArgToVoice(arg);
+    this.voiceName = voiceName;
+    this.voice = voice;
+  }
+
+  mapArgToVoice(arg) {
+    switch (arg) {
+      case 1:
+        return ["osc synth", Synth];
+        break;
+      case 2:
+        return ["membrane synth", MembraneSynth];
+        break;
+      default:
+        return ["osc synth", Synth];
+    }
+  }
+
   generateInnerHTML() {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(1): voice</h3>
       <p id="voice_${this.address}">voice: ${this.voiceName}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
@@ -99,11 +119,46 @@ class SynthChannel extends Channel {
       (this.lastMessageDescription = "awaiting input");
   }
 
+  setAmplitudeEnvelope(attack, decay, sustain, release) {
+    this.amplitudeEnvelopeArgs = {
+      attack: attack,
+      decay: decay,
+      sustain: sustain,
+      release: release,
+    };
+  }
+
+  setWaveformAndPartial(wave, partial) {
+    this.waveform = this.mapArgsToWaveform(wave, partial);
+  }
+
+  mapArgsToWaveform(wave, partial) {
+    partial = partial === 0 ? "" : `${partial}`;
+    switch (wave) {
+      case 1:
+        return `sine${partial}`;
+        break;
+      case 2:
+        return `square${partial}`;
+        break;
+      case 3:
+        return `sawtooth${partial}`;
+        break;
+      case 4:
+        return `triangle${partial}`;
+        break;
+      default:
+        return `sine${partial}`;
+    }
+  }
+
   generateInnerHTML() {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(1): waveform</h3>
       <p id="waveform_${this.address}">waveform: ${this.waveform}</p>
+      <h3>opt_group(2): envelope</h3>
       <p id="amplitude_envelope_${this.address}">amplitude envelope: ${JSON.stringify(this.amplitudeEnvelopeArgs)}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
@@ -156,39 +211,6 @@ class ControlChannel extends Channel {
     this.lastMessageDescription = `set:channel:/${channel} to: ${action}`;
   }
 
-  mapArgToVoice(arg) {
-    switch (arg) {
-      case 1:
-        return ["osc synth", Synth];
-        break;
-      case 2:
-        return ["membrane synth", MembraneSynth];
-        break;
-      default:
-        return ["osc synth", Synth];
-    }
-  }
-
-  mapArgsToWaveform(wave, partial) {
-    partial = partial === 0 ? "" : `${partial}`;
-    switch (wave) {
-      case 1:
-        return `sine${partial}`;
-        break;
-      case 2:
-        return `square${partial}`;
-        break;
-      case 3:
-        return `sawtooth${partial}`;
-        break;
-      case 4:
-        return `triangle${partial}`;
-        break;
-      default:
-        return `sine${partial}`;
-    }
-  }
-
   handle(oscMsg) {
     console.log(
       `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
@@ -198,19 +220,34 @@ class ControlChannel extends Channel {
     var actionMessage = "";
 
     if (channel instanceof InstrumentChannel) {
-      [channel.voiceName, channel.voice] = this.mapArgToVoice(oscMsg.args[1]);
-      actionMessage = `voice: ${channel.voiceName}`;
+      switch (oscMsg.args[1]) {
+        case 1:
+          channel.setVoice(oscMsg.args[2]);
+          actionMessage = `voice: ${channel.voiceName}`;
+          break;
+        default:
+          console.log("Invalid option group");
+      }
     } else if (channel instanceof SynthChannel) {
-      channel.waveform = this.mapArgsToWaveform(oscMsg.args[1], oscMsg.args[2]);
-      channel.amplitudeEnvelopeArgs = {
-        attack: oscMsg.args[3] / 10,
-        decay: oscMsg.args[4] / 10,
-        sustain: oscMsg.args[5] / 10,
-        release: oscMsg.args[6] / 10,
-      };
-      actionMessage = `waveform: ${channel.waveform} amplitude envelope: ${JSON.stringify(
-        channel.amplitudeEnvelopeArgs,
-      )}`;
+      switch (oscMsg.args[1]) {
+        case 1:
+          channel.setWaveformAndPartial(oscMsg.args[2], oscMsg.args[3]);
+          actionMessage = `waveform: ${channel.waveform}`;
+          break;
+        case 2:
+          channel.setAmplitudeEnvelope(
+            oscMsg.args[2],
+            oscMsg.args[3],
+            oscMsg.args[4],
+            oscMsg.args[5],
+          );
+          actionMessage = `amplitude envelope: ${JSON.stringify(
+            channel.amplitudeEnvelopeArgs,
+          )}`;
+          break;
+        default:
+          console.log("Invalid option group");
+      }
     }
 
     channel.render();
