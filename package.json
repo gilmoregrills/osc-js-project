@@ -5,9 +5,11 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode production",
+    "build-dev": "webpack --mode development",
     "build:docker": "docker build -t osc-chat:latest .",
     "cdk": "cdk",
+    "cdk:deploy": "cdk deploy",
     "test": "jest",
     "start": "node index.js",
     "start:docker": "docker run -it -p 8080:8080 -p 8081:8081 -p 57121:57121/udp osc-chat:latest"

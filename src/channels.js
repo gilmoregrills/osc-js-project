@@ -2,22 +2,19 @@ import { MembraneSynth, Synth, Time } from "tone";
 import { convertIntsToPitchOctave } from "./util";
 
 class Channel {
-  constructor(address, voice) {
+  constructor(address, voice, voiceName) {
     this.address = address;
     this.voice = voice;
+    this.voiceName = voiceName;
     this.lastMessageDescription = "awaiting input";
   }
 
   generateInnerHTML() {
     return `
       <h2>channel:${this.address}</h2>
-      <p id="voice_${this.address}">voice: ${this.voiceName()}</p>
+      <p id="voice_${this.address}">voice: ${this.voiceName}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
-  }
-
-  voiceName() {
-    return this.voice.name.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
   }
 
   render() {
@@ -60,13 +57,13 @@ class ControlChannel extends Channel {
   mapArgToVoice(arg) {
     switch (arg) {
       case 1:
-        return Synth;
+        return ["osc synth", Synth];
         break;
       case 2:
-        return MembraneSynth;
+        return ["membrane synth", MembraneSynth];
         break;
       default:
-        return Synth;
+        return ["osc synth", Synth];
     }
   }
 
@@ -86,7 +83,7 @@ class ControlChannel extends Channel {
       `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
     );
     const channel = allChannels.channels[`/${oscMsg.args[0]}`];
-    channel.voice = this.mapArgToVoice(oscMsg.args[1]);
+    [channel.voiceName, channel.voice] = this.mapArgToVoice(oscMsg.args[1]);
     channel.render();
     this.updateLastMessageDescription(channel.address, channel.voice.name);
     this.render();
@@ -96,8 +93,8 @@ class ControlChannel extends Channel {
 export const allChannels = {
   channels: {
     "/0": new ControlChannel("/0"),
-    "/1": new Channel("/1", Synth),
-    "/2": new Channel("/2", MembraneSynth),
+    "/1": new Channel("/1", Synth, "osc synth"),
+    "/2": new Channel("/2", MembraneSynth, "membrane synth"),
   },
 
   initialise() {
