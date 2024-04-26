@@ -31,16 +31,7 @@ body {
 .broadcast {
   align-items: left;
   border-right: 1px solid #000;
-}
-
-.header {
-  width: 100%;
-  margin: 0px;
-  padding: 0px;
-  border-left: 0px solid #000;
-  border-right: 0px solid #000;
-  border-top: 0px solid #000;
-  border-bottom: 1px solid #000;
+  border-left: 1px solid #000;
 }
 
 .footer {
@@ -52,7 +43,7 @@ body {
     border-top: 1px solid #000;
 }
 
-.footer-content,.header-content {
+.footer-content {
   padding: 0px;
 }
 
