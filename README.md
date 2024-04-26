@@ -10,13 +10,15 @@ multiplayer osc message processor and sender
 - [x] model and load channels in a way that's more maintainable and makes adding channels easier
 - [x] add some basic channel settings and ensure they're extensible
 - [x] add per-channel volume control
+- [x] start persisting channel config to a db (must be done entirely server-side) and loading from it on startup
 - [ ] add effects to channels, or a way of adding/confguring effects
-- [ ] start persisting channel config to a db (must be done entirely server-side) and loading from it on startup
-- [ ] start persisting all OSC message logs, displaying the 5 most recent and making the full/most recent tail available on /logs
-- [ ] quantize messages or otherwise ensure that new messages snap to a grid
+- [ ] display all logs at /logs
+- [ ] quantize messages that trigger sound, or otherwise ensure that new messages snap to a grid
 - [ ] assign new connections a randomly generated username and include that username in the logs
 - [ ] OPTIONAL (if possible): persist that username between sessions somehow?
 - [ ] add some visual feedback on channels when a sound is produced
+- [ ] add some visual feedback on channels when settings are changed
+- [ ] improve overall visual design
 
 ### channel types
 
