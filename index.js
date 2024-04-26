@@ -170,7 +170,7 @@ wss.on("connection", (socket) => {
 
   socketPort.on("message", (oscMsg) => {
     console.log(
-      `Received OSC message via WebSocket: ${oscMsg}, redirecting it to UDP port.`,
+      `Received OSC message via WebSocket: ${JSON.stringify(oscMsg)}, redirecting it to UDP port.`,
     );
     udpPort.send(oscMsg, "0.0.0.0", "57121");
   });
