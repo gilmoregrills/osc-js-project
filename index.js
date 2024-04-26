@@ -9,7 +9,11 @@ const {
   DynamoDBClient,
 } = require("@aws-sdk/client-dynamodb");
 const { SSMClient, GetParameterCommand } = require("@aws-sdk/client-ssm");
-const { PutCommand, DynamoDBDocumentClient } = require("@aws-sdk/lib-dynamodb");
+const {
+  ScanCommand,
+  PutCommand,
+  DynamoDBDocumentClient,
+} = require("@aws-sdk/lib-dynamodb");
 const { fromSSO } = require("@aws-sdk/credential-provider-sso");
 const { fromInstanceMetadata } = require("@aws-sdk/credential-providers");
 
@@ -100,6 +104,25 @@ const saveControlMessage = async (oscMsg) => {
   const response = await docClient.send(command);
   return response;
 };
+
+app.get("/api/get-control-messages", async (req, res) => {
+  console.log(
+    `Fetching all control messages from DynamoDB table: ${await tableName}`,
+  );
+
+  const command = new ScanCommand({
+    TableName: await tableName,
+  });
+
+  const response = await docClient.send(command);
+  const messages = response.Items.map((item) => ({
+    address: item.channel,
+    args: item.args,
+  }));
+  console.log(`Retrieved control messages: ${JSON.stringify(messages)}`);
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({ controlMessages: messages }));
+});
 
 const udpPort = new osc.UDPPort({
   localAddress: "0.0.0.0",

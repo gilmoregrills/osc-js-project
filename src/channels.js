@@ -20,6 +20,7 @@ class Channel {
   }
 
   generateInnerHTML() {
+    console.log;
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
@@ -128,10 +129,10 @@ class SynthChannel extends Channel {
 
   setAmplitudeEnvelope(attack, decay, sustain, release) {
     this.amplitudeEnvelopeArgs = {
-      attack: attack,
-      decay: decay,
-      sustain: sustain,
-      release: release,
+      attack: attack / 10,
+      decay: decay / 10,
+      sustain: sustain / 10,
+      release: release / 10,
     };
   }
 
@@ -140,7 +141,7 @@ class SynthChannel extends Channel {
   }
 
   mapArgsToWaveform(wave, partial) {
-    partial = partial === 0 ? "" : `${partial}`;
+    partial = partial === 0 || partial === undefined ? "" : `${partial}`;
     switch (wave) {
       case 1:
         return `sine${partial}`;
@@ -282,9 +283,19 @@ export const allChannels = {
     "/3": new SynthChannel("/3", "sine"),
   },
 
-  initialise() {
+  async initialise() {
+    console.log("Initialising channels with defaults.");
     for (const addr in this.channels) {
       this.channels[addr].initialise();
     }
+
+    console.log(
+      "Fetching last control message for each channel and option group from backend.",
+    );
+    const response = await fetch("/api/get-control-messages");
+    const controlMessages = await response.json();
+    controlMessages.controlMessages.forEach((oscMsg) => {
+      this.channels[oscMsg.address].handle(oscMsg);
+    });
   },
 };

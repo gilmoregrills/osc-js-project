@@ -27,3 +27,26 @@ Send an OSC message as JSON to the server, which will convert it to OSC and send
 ```shell
 curl -X POST -H "Content-Type: application/json" -d '{"address": 0, "args2, 5]}' http://localhost:8080/api/send-message
 ```
+
+## GET /api/get-control-messages
+
+Fetch all persisted control messages, used to configure newly-connected clients.
+
+### response body
+
+```json
+{
+  "controlMessages": [
+    {
+      "address": string,
+      "args": [int]
+    }
+  ]
+}
+```
+
+### example
+
+```shell
+curl http://localhost:8080/api/get-control-messages
+```
