@@ -11,6 +11,7 @@ multiplayer osc message processor and sender
 - [x] add some basic channel settings and ensure they're extensible
 - [x] add per-channel volume control
 - [x] start persisting channel config to a db (must be done entirely server-side) and loading from it on startup
+- [ ] add global settings (time sig?? bpm??) to option groups in control channel
 - [ ] add effects to channels, or a way of adding/confguring effects
 - [ ] display all logs at /logs
 - [ ] quantize messages that trigger sound, or otherwise ensure that new messages snap to a grid
