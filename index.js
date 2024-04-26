@@ -135,10 +135,12 @@ console.log("UDP port created on 0.0.0.0:57121");
 
 udpPort.on("message", (oscMsg, timeTag, info) => {
   console.log(
-    `Received OSC message via UDP: ${oscMsg}, relaying to WebSocket.`,
+    `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, relaying to WebSocket.`,
   );
   console.log("Remote info is: .", info);
-  saveControlMessage(oscMsg);
+  if (oscMsg.address === "/0") {
+    saveControlMessage(oscMsg);
+  }
 });
 
 udpPort.on("ready", () => {
