@@ -25,6 +25,11 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.556.0",
+    "@aws-sdk/client-ssm": "^3.562.0",
+    "@aws-sdk/credential-provider-sso": "^3.556.0",
+    "@aws-sdk/credential-providers": "^3.556.0",
+    "@aws-sdk/lib-dynamodb": "^3.556.0",
     "css-loader": "^7.1.1",
     "dgram": "^1.0.1",
     "express": "^4.19.2",
