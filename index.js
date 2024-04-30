@@ -16,6 +16,8 @@ const {
 } = require("@aws-sdk/lib-dynamodb");
 const { fromSSO } = require("@aws-sdk/credential-provider-sso");
 const { fromInstanceMetadata } = require("@aws-sdk/credential-providers");
+const { uniqueNamesGenerator, names } = require("unique-names-generator");
+const ipInt = require("ip-to-int");
 
 // express
 const app = express();
@@ -94,7 +96,7 @@ const saveControlMessage = async (oscMsg) => {
   const command = new PutCommand({
     TableName: await tableName,
     Item: {
-      channelAndGroup: `${oscMsg.args[0]}${oscMsg.args[1]}`,
+      channelAndGroup: `${oscMsg.args[1][0]}${oscMsg.args[1][1]}`,
       channel: oscMsg.address,
       args: oscMsg.args,
       timestamp: Date.now().toString(),
@@ -117,7 +119,7 @@ app.get("/api/get-control-messages", async (req, res) => {
   const response = await docClient.send(command);
   const messages = response.Items.map((item) => ({
     address: item.channel,
-    args: item.args,
+    args: ["loader", item.args],
   }));
   console.log(`Retrieved control messages: ${JSON.stringify(messages)}`);
   res.setHeader("Content-Type", "application/json");
@@ -134,10 +136,6 @@ const udpPort = new osc.UDPPort({
 console.log("UDP port created on 0.0.0.0:57121");
 
 udpPort.on("message", (oscMsg, timeTag, info) => {
-  console.log(
-    `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, relaying to WebSocket.`,
-  );
-  console.log("Remote info is: .", info);
   if (oscMsg.address === "/0") {
     saveControlMessage(oscMsg);
   }
@@ -164,9 +162,38 @@ wss.on("connection", (socket) => {
     socket: socket,
   });
 
-  var relay = new osc.Relay(udpPort, socketPort, {
-    raw: true,
-  });
+  function forwardMessageToWebSocket(oscMsg, timeTag, info) {
+    console.log(
+      `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, redirecting it to WebSocket.`,
+    );
+    const seed = ipInt(info.address).toInt();
+    const name = uniqueNamesGenerator({
+      dictionaries: [names],
+      seed: seed,
+    }).toLowerCase();
+    try {
+      socketPort.send({
+        address: oscMsg.address,
+        args: [{ type: "s", value: name }, oscMsg.args],
+      });
+    } catch (error) {
+      if (error.code === "ERR_UNHANDLED_ERROR") {
+        console.log(
+          `Error sending OSC message to WebSocket: ${error.message}, closing the connection and removing the listener.`,
+        );
+        udpPort.removeListener("message", forwardMessageToWebSocket);
+        socketPort.close();
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  udpPort.on("message", forwardMessageToWebSocket);
+
+  // var relay = new osc.Relay(udpPort, socketPort, {
+  //   raw: true,
+  // });
 
   socketPort.on("message", (oscMsg) => {
     console.log(

@@ -1,7 +1,9 @@
 var messageLog = [];
 
 export const updateMessageLog = (oscMsg) => {
-  messageLog.push(JSON.stringify(oscMsg));
+  messageLog.push(
+    `${oscMsg.args[0]}: ${JSON.stringify(oscMsg.args[1])} -> ${oscMsg.address}`,
+  );
   if (messageLog.length > 6) {
     messageLog.shift();
   }
