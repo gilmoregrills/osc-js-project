@@ -134,10 +134,6 @@ const udpPort = new osc.UDPPort({
 console.log("UDP port created on 0.0.0.0:57121");
 
 udpPort.on("message", (oscMsg, timeTag, info) => {
-  console.log(
-    `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, relaying to WebSocket.`,
-  );
-  console.log("Remote info is: .", info);
   if (oscMsg.address === "/0") {
     saveControlMessage(oscMsg);
   }
@@ -164,9 +160,21 @@ wss.on("connection", (socket) => {
     socket: socket,
   });
 
-  var relay = new osc.Relay(udpPort, socketPort, {
-    raw: true,
+  udpPort.on("message", (oscMsg, timeTag, info) => {
+    console.log(
+      `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, redirecting it to WebSocket.`,
+    );
+    oscMsg.source = info.address;
+    console.log(JSON.stringify(oscMsg));
+    socketPort.send({
+      address: oscMsg.address,
+      args: [{ type: "s", value: info.address }, oscMsg.args],
+    });
   });
+
+  // var relay = new osc.Relay(udpPort, socketPort, {
+  //   raw: true,
+  // });
 
   socketPort.on("message", (oscMsg) => {
     console.log(
