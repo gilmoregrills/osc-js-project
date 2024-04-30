@@ -102,8 +102,8 @@ class InstrumentChannel extends Channel {
     console.log(
       `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
     );
-    const note = convertIntsToPitchOctave(oscMsg.args[0], oscMsg.args[1]);
-    const duration = Time(oscMsg.args[2] / 10).toNotation();
+    const note = convertIntsToPitchOctave(oscMsg.args[1][0], oscMsg.args[1][1]);
+    const duration = Time(oscMsg.args[1][2] / 10).toNotation();
 
     const oscSynth = new this.voice({ volume: this.volume }).toDestination();
     oscSynth.triggerAttackRelease(note, duration);
@@ -182,8 +182,8 @@ class SynthChannel extends Channel {
     console.log(
       `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
     );
-    const note = convertIntsToPitchOctave(oscMsg.args[0], oscMsg.args[1]);
-    const duration = Time(oscMsg.args[2] / 10).toNotation();
+    const note = convertIntsToPitchOctave(oscMsg.args[1][0], oscMsg.args[1][1]);
+    const duration = Time(oscMsg.args[1][2] / 10).toNotation();
 
     const env = new AmplitudeEnvelope(
       this.amplitudeEnvelopeArgs,
@@ -227,38 +227,38 @@ class ControlChannel extends Channel {
       `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
     );
 
-    const channel = allChannels.channels[`/${oscMsg.args[0]}`];
+    const channel = allChannels.channels[`/${oscMsg.args[1][0]}`];
     var actionMessage = "";
 
     if (channel instanceof InstrumentChannel) {
-      switch (oscMsg.args[1]) {
+      switch (oscMsg.args[1][1]) {
         case 1:
-          channel.setVolume(oscMsg.args[2]);
+          channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
           break;
         case 2:
-          channel.setVoice(oscMsg.args[2]);
+          channel.setVoice(oscMsg.args[1][2]);
           actionMessage = `voice: ${channel.voiceName}`;
           break;
         default:
           console.log("Invalid option group");
       }
     } else if (channel instanceof SynthChannel) {
-      switch (oscMsg.args[1]) {
+      switch (oscMsg.args[1][1]) {
         case 1:
-          channel.setVolume(oscMsg.args[2]);
+          channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
           break;
         case 2:
-          channel.setWaveformAndPartial(oscMsg.args[2], oscMsg.args[3]);
+          channel.setWaveformAndPartial(oscMsg.args[1][2], oscMsg.args[1][3]);
           actionMessage = `waveform: ${channel.waveform}`;
           break;
         case 3:
           channel.setAmplitudeEnvelope(
-            oscMsg.args[2],
-            oscMsg.args[3],
-            oscMsg.args[4],
-            oscMsg.args[5],
+            oscMsg.args[1][2],
+            oscMsg.args[1][3],
+            oscMsg.args[1][4],
+            oscMsg.args[1][5],
           );
           actionMessage = `amplitude envelope: ${JSON.stringify(
             channel.amplitudeEnvelopeArgs,

@@ -94,7 +94,7 @@ const saveControlMessage = async (oscMsg) => {
   const command = new PutCommand({
     TableName: await tableName,
     Item: {
-      channelAndGroup: `${oscMsg.args[0]}${oscMsg.args[1]}`,
+      channelAndGroup: `${oscMsg.args[1][0]}${oscMsg.args[1][1]}`,
       channel: oscMsg.address,
       args: oscMsg.args,
       timestamp: Date.now().toString(),
@@ -117,7 +117,7 @@ app.get("/api/get-control-messages", async (req, res) => {
   const response = await docClient.send(command);
   const messages = response.Items.map((item) => ({
     address: item.channel,
-    args: item.args,
+    args: ["loader", item.args],
   }));
   console.log(`Retrieved control messages: ${JSON.stringify(messages)}`);
   res.setHeader("Content-Type", "application/json");
