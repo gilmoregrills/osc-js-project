@@ -42,7 +42,7 @@ class Channel {
   }
 
   updateLastMessageDescription(oscMsg) {
-    this.lastMessageDescription = `received: [${oscMsg}]`;
+    this.lastMessageDescription = `received: [${oscMsg.args[1]}] from: ${oscMsg.args[0]}`;
   }
 
   handle(oscMsg) {
@@ -95,7 +95,7 @@ class InstrumentChannel extends Channel {
   }
 
   updateLastMessageDescription(oscMsg, note, duration) {
-    this.lastMessageDescription = `received: [${oscMsg.args}] played: ${note} for: ${duration}`;
+    this.lastMessageDescription = `${oscMsg.args[0]} played: ${note} for: ${duration}`;
   }
 
   handle(oscMsg) {
@@ -175,7 +175,7 @@ class SynthChannel extends Channel {
   }
 
   updateLastMessageDescription(oscMsg, note, duration) {
-    this.lastMessageDescription = `received: [${oscMsg.args}] played: ${note} for: ${duration}`;
+    this.lastMessageDescription = `${oscMsg.args[0]} played: ${note} for: ${duration}`;
   }
 
   handle(oscMsg) {
@@ -218,8 +218,8 @@ class ControlChannel extends Channel {
     `;
   }
 
-  updateLastMessageDescription(channel, action) {
-    this.lastMessageDescription = `set:channel:/${channel} to: ${action}`;
+  updateLastMessageDescription(channel, action, name) {
+    this.lastMessageDescription = `${name} set:channel:${channel} to: ${action}`;
   }
 
   handle(oscMsg) {
@@ -270,7 +270,11 @@ class ControlChannel extends Channel {
     }
 
     channel.render();
-    this.updateLastMessageDescription(channel.address, actionMessage);
+    this.updateLastMessageDescription(
+      channel.address,
+      actionMessage,
+      oscMsg.args[0],
+    );
     this.render();
   }
 }

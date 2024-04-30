@@ -43,7 +43,6 @@ document
 allChannels.initialise();
 
 oscPort.on("message", (oscMsg) => {
-  console.log(JSON.stringify(oscMsg));
   allChannels.channels[oscMsg.address].handle(oscMsg);
   updateMessageLog(oscMsg);
 });
