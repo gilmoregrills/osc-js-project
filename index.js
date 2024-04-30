@@ -16,6 +16,8 @@ const {
 } = require("@aws-sdk/lib-dynamodb");
 const { fromSSO } = require("@aws-sdk/credential-provider-sso");
 const { fromInstanceMetadata } = require("@aws-sdk/credential-providers");
+const { uniqueNamesGenerator, names } = require("unique-names-generator");
+const ipInt = require("ip-to-int");
 
 // express
 const app = express();
@@ -164,11 +166,14 @@ wss.on("connection", (socket) => {
     console.log(
       `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, redirecting it to WebSocket.`,
     );
-    oscMsg.source = info.address;
-    console.log(JSON.stringify(oscMsg));
+    const seed = ipInt(info.address).toInt();
+    const name = uniqueNamesGenerator({
+      dictionaries: [names],
+      seed: seed,
+    }).toLowerCase();
     socketPort.send({
       address: oscMsg.address,
-      args: [{ type: "s", value: info.address }, oscMsg.args],
+      args: [{ type: "s", value: name }, oscMsg.args],
     });
   });
 
