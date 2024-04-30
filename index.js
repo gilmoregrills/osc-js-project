@@ -162,7 +162,7 @@ wss.on("connection", (socket) => {
     socket: socket,
   });
 
-  udpPort.on("message", (oscMsg, timeTag, info) => {
+  function forwardMessageToWebSocket(oscMsg, timeTag, info) {
     console.log(
       `Received OSC message via UDP: ${JSON.stringify(oscMsg)}, redirecting it to WebSocket.`,
     );
@@ -171,11 +171,25 @@ wss.on("connection", (socket) => {
       dictionaries: [names],
       seed: seed,
     }).toLowerCase();
-    socketPort.send({
-      address: oscMsg.address,
-      args: [{ type: "s", value: name }, oscMsg.args],
-    });
-  });
+    try {
+      socketPort.send({
+        address: oscMsg.address,
+        args: [{ type: "s", value: name }, oscMsg.args],
+      });
+    } catch (error) {
+      if (error.code === "ERR_UNHANDLED_ERROR") {
+        console.log(
+          `Error sending OSC message to WebSocket: ${error.message}, closing the connection and removing the listener.`,
+        );
+        udpPort.removeListener("message", forwardMessageToWebSocket);
+        socketPort.close();
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  udpPort.on("message", forwardMessageToWebSocket);
 
   // var relay = new osc.Relay(udpPort, socketPort, {
   //   raw: true,
