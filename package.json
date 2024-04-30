@@ -1,7 +1,7 @@
 {
   "name": "osc-chat",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server/index.js",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "cdk": "cdk",
     "cdk:deploy": "cdk deploy",
     "test": "jest",
-    "start": "node index.js",
+    "start": "node src/server/index.js",
     "start:docker": "docker run -it -p 8080:8080 -p 8081:8081 -p 57121:57121/udp osc-chat:latest"
   },
   "bin": {

@@ -15,8 +15,8 @@ multiplayer osc message processor and sender
 - [ ] add effects to channels, or a way of adding/confguring effects
 - [ ] display all logs at /logs
 - [ ] quantize messages that trigger sound, or otherwise ensure that new messages snap to a grid
-- [ ] assign new connections a randomly generated username and include that username in the logs
-- [ ] OPTIONAL (if possible): persist that username between sessions somehow?
+- [x] assign new connections a randomly generated username and include that username in the logs
+- [x] OPTIONAL (if possible): persist that username between sessions somehow?
 - [ ] add some visual feedback on channels when a sound is produced
 - [ ] add some visual feedback on channels when settings are changed
 - [ ] improve overall visual design

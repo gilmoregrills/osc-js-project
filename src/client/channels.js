@@ -5,7 +5,7 @@ import {
   AmplitudeEnvelope,
   Time,
 } from "tone";
-import { convertIntsToPitchOctave } from "./util";
+import { convertIntsToPitchOctave } from "./utils";
 
 class Channel {
   constructor(address) {
