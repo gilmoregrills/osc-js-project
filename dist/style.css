@@ -62,4 +62,10 @@ form {
 .sequencer-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+}
+
+input {
+  padding: 0rem;
+  height: 16px;
 }

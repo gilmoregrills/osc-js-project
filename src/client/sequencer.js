@@ -2,16 +2,17 @@ class gridItem {
   constructor(position, isActive) {
     this.position = position;
     this.isActive = isActive;
+    this.isHighlighted = false;
   }
 
-  toggle() {
+  toggleActive() {
     this.isActive = !this.isActive;
   }
 
   generateInnerHTML() {
-    console.log;
+    var character = this.isActive ? "x" : "o";
     return `
-      <p>${this.isActive ? "x" : "o"}</p>
+      <p>${character}</p>
     `;
   }
 
@@ -32,7 +33,7 @@ class gridItem {
   }
 
   handleClick(e) {
-    this.toggle();
+    this.toggleActive();
     this.render();
   }
 }
@@ -40,7 +41,7 @@ class gridItem {
 const makeGrid = () => {
   const rows = [];
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 4; i++) {
     const row = [];
     var x = i;
     for (let i = 0; i < 8; i++) {

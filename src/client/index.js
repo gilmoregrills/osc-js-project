@@ -1,8 +1,8 @@
-import { WebSocketPort, timeTag } from "osc/dist/osc-browser";
 import { start, getDestination, Transport } from "tone";
 import { messageLog, updateMessageLog } from "./logging";
 import { Channel, ControlChannel, allChannels } from "./channels";
 import { makeSequencer } from "./sequencer";
+import { WebSocketPort, timeTag } from "osc";
 
 const wsUrl =
   location.host == "localhost:8080"
@@ -58,8 +58,12 @@ const configLoop = () => {
     const messages = [];
     grid.forEach((row, index) => {
       let item = row[beat];
+      let prevBeat = beat === 0 ? 7 : beat - 1;
+      document.getElementById(`${index}${prevBeat}`).style.textDecoration =
+        "none";
+      document.getElementById(`${index}${beat}`).style.textDecoration =
+        "underline";
       if (item.isActive) {
-        console.log(beat);
         let rawMsg = document
           .getElementById(`sequencer-message-field-${index}`)
           .value.split(" ");
