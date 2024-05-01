@@ -5,6 +5,6 @@ cdk.out
 test
 jest.config.js
 *.md
-src
+src/client
 bin
 lib

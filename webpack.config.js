@@ -1,7 +1,7 @@
 const path = require("path");
 
 var config = {
-  entry: "./src/index.js",
+  entry: "./src/client/index.js",
   watch: false,
   optimization: {
     minimize: true,
