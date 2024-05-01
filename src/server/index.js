@@ -1,6 +1,7 @@
 const express = require("express");
+const osc = require("./osc");
 
-require("./osc");
+osc.initialise();
 
 const app = express();
 const port = 8080;
