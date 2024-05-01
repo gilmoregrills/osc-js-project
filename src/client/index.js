@@ -1,7 +1,8 @@
-import { WebSocketPort } from "osc/dist/osc-browser";
-import { start } from "tone";
+import { WebSocketPort, timeTag } from "osc/dist/osc-browser";
+import { start, getDestination, Transport } from "tone";
 import { messageLog, updateMessageLog } from "./logging";
 import { Channel, ControlChannel, allChannels } from "./channels";
+import { makeSequencer } from "./sequencer";
 
 const wsUrl =
   location.host == "localhost:8080"
@@ -20,6 +21,9 @@ document
     console.log("Audio context is ready");
     oscPort.open();
     console.log("OSC WebSocketPort opened");
+    getDestination().volume.rampTo(-10, 0.001);
+    configLoop();
+    Transport.start();
   });
 
 document
@@ -40,9 +44,37 @@ document
       `sent: {address: ${channel}, args: ${args}}`;
   });
 
-allChannels.initialise();
-
 oscPort.on("message", (oscMsg) => {
   allChannels.channels[oscMsg.address].handle(oscMsg);
   updateMessageLog(oscMsg);
 });
+
+allChannels.initialise();
+const grid = makeSequencer();
+var beat = 0;
+
+const configLoop = () => {
+  const repeat = (time) => {
+    const messages = [];
+    grid.forEach((row, index) => {
+      let item = row[beat];
+      if (item.isActive) {
+        console.log(beat);
+        let rawMsg = document
+          .getElementById(`sequencer-message-field-${index}`)
+          .value.split(" ");
+        messages.push({
+          address: `/${rawMsg[0]}`,
+          args: rawMsg.slice(1).map(Number),
+        });
+      }
+    });
+    if (messages.length > 0) {
+      oscPort.send({ packets: messages, timeTag: timeTag(time) });
+    }
+    beat = (beat + 1) % 8;
+  };
+
+  Transport.bpm.value = 60;
+  Transport.scheduleRepeat(repeat, "8n");
+};

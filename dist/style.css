@@ -26,12 +26,12 @@ body {
 }
 
 .about {
+  border-right: 1px solid #000;
 }
 
 .broadcast {
   align-items: left;
   border-right: 1px solid #000;
-  border-left: 1px solid #000;
 }
 
 .footer {
@@ -51,4 +51,15 @@ form {
     /* justify-content: center; */
     align-items: center;
     height: 100%;
+}
+.sequencer {
+  border-right: 1px solid #000;
+  display: grid;
+  grid-auto-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  display:block;
+}
+
+.sequencer-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
