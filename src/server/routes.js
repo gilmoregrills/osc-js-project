@@ -8,13 +8,13 @@ module.exports = (app) => {
   });
 
   app.get("/spec", (req, res) => {
-    var path = __dirname + "../doc/spec.md";
+    var path = __dirname + "/../../doc/spec.md";
     var file = readFileSync(path, "utf8");
     res.send(marked.parse(file.toString()));
   });
 
   app.get("/api", (req, res) => {
-    var path = __dirname + "../doc/api.md";
+    var path = __dirname + "/../../doc/api.md";
     var file = readFileSync(path, "utf8");
     res.send(marked.parse(file.toString()));
   });
