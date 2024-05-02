@@ -18,22 +18,17 @@
           <div class="about">
             <p>osc-chat is a multiplayer OSC message receiver and sender</p>
             <p>
-              <button id="engine-start-button">start</button> the audio engine and open the websocket
+              <button id="engine-start-button">start</button> the sequencer, audio engine, and open the websocket
             </p>
-            <p>send OSC messages to port 57121, via the api, or using the form below to interact</p>
-            <p><a href="/spec">osc msg spec</a></p>
-            <p><a href="/api">api docs</a></p>
-          </div>
-          <div class="broadcast">
-            <p>send OSC message to all clients, enter a channel number, then enter args as space-spaced integers</p>
+            <p>send OSC messages to port 57121, via the <a href="/api">api</a>, or using the field below</p>
+            <p><a href="/spec">message spec</a>   <a href="/api">api docs</a>
+            <p id="sent-message"></p>
             <form id="broadcast-form">
-              <input type="text" id="channel" name="channel" value="1">
-              <label for="channel"><- channel:/# </label><br>
-              <input type="text" id="args" name="args" value="1 4 10">
-              <label for="args"><- args </label><br>
+              <input type="text" id="text-input-message-field" name="text-input-message-field" value="3 3 2 8">
               <input type="submit" value="send_osc">
             </form>
-            <p id="sent_message">...</p>
+          </div>
+          <div id="sequencer" class="sequencer">
           </div>
           <div class="log">
             <div id="log-messages" class="log-messages">
