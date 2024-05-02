@@ -24,6 +24,7 @@ multiplayer osc message sequencer, receiver, and sound generator
 - [ ] improve overall visual design
 - [ ] change the way user names are set, so that messages from the inbuilt sequencer from different clients can be distinguished
 - [ ] add a message explainer, either to the input box of the sequencer or on a separate page (message spec docs page?)
+- [ ] add a documentation nav bar
 
 ### channel types
 
