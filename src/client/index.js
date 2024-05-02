@@ -3,6 +3,7 @@ import { messageLog, updateMessageLog } from "./logging";
 import { Channel, ControlChannel, allChannels } from "./channels";
 import { makeSequencer } from "./sequencer";
 import { WebSocketPort, timeTag } from "osc";
+import { messageStringToMessage } from "./utils";
 
 const wsUrl =
   location.host == "localhost:8080"
@@ -30,17 +31,14 @@ document
   .getElementById("broadcast-form")
   .addEventListener("submit", (event) => {
     event.preventDefault();
-    const channel = `/${document.getElementById("channel").value}`;
-    const args = document.getElementById("args").value;
-    console.log(
-      `Sending osc from frontend to backend and back again on channel: ${channel} with args: ${args}`,
+    const message = messageStringToMessage(
+      document.getElementById("text-input-message-field").value,
     );
-    // todo: add validation that we're receiving only numbers
-    oscPort.send({
-      address: channel,
-      args: args.split(" ").map(Number),
-    });
-    document.getElementById("sent_message").textContent =
+    console.log(
+      `Sending osc from frontend to backend and back again: ${JSON.stringify(message)}`,
+    );
+    oscPort.send(message);
+    document.getElementById("sent-message").textContent =
       `sent: {address: ${channel}, args: ${args}}`;
   });
 
@@ -64,13 +62,10 @@ const configLoop = () => {
       document.getElementById(`${index}${beat}`).style.textDecoration =
         "underline";
       if (item.isActive) {
-        let rawMsg = document
-          .getElementById(`sequencer-message-field-${index}`)
-          .value.split(" ");
-        messages.push({
-          address: `/${rawMsg[0]}`,
-          args: rawMsg.slice(1).map(Number),
-        });
+        const message = messageStringToMessage(
+          document.getElementById(`sequencer-message-field-${index}`).value,
+        );
+        messages.push(message);
       }
     });
     if (messages.length > 0) {

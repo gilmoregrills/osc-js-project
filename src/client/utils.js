@@ -15,3 +15,12 @@ export const convertIntsToPitchOctave = (pitch, octave) => {
   };
   return `${pitchMap[pitch]}${octave}`;
 };
+
+export const messageStringToMessage = (messageString) => {
+  // todo: add validation that we're receiving only numbers
+  const messageArray = messageString.split(" ");
+  return {
+    address: `/${messageArray[0]}`,
+    args: messageArray.slice(1).map(Number),
+  };
+};

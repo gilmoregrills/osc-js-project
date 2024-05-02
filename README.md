@@ -1,6 +1,6 @@
 # osc-chat
 
-multiplayer osc message processor and sender
+multiplayer osc message sequencer, receiver, and sound generator
 
 ## todo
 
@@ -14,12 +14,16 @@ multiplayer osc message processor and sender
 - [ ] add global settings (time sig?? bpm??) to option groups in control channel
 - [ ] add effects to channels, or a way of adding/confguring effects
 - [ ] display all logs at /logs
-- [ ] quantize messages that trigger sound, or otherwise ensure that new messages snap to a grid
-- [x] assign new connections a randomly generated username and include that username in the logs
+- [ ] quantize messages that trigger sound
+- [ ] add more voices to the instrument channels
+- [ ] add a second synth channel
+- [x] assign new connections a randomly generated username based on IP and include that username in the logs
 - [x] OPTIONAL (if possible): persist that username between sessions somehow?
 - [ ] add some visual feedback on channels when a sound is produced
 - [ ] add some visual feedback on channels when settings are changed
 - [ ] improve overall visual design
+- [ ] change the way user names are set, so that messages from the inbuilt sequencer from different clients can be distinguished
+- [ ] add a message explainer, either to the input box of the sequencer or on a separate page (message spec docs page?)
 
 ### channel types
 

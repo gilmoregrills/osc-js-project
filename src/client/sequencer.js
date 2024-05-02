@@ -10,7 +10,7 @@ class gridItem {
   }
 
   generateInnerHTML() {
-    var character = this.isActive ? "x" : "o";
+    var character = this.isActive ? "x" : ".";
     return `
       <p>${character}</p>
     `;
@@ -54,10 +54,29 @@ const makeGrid = () => {
   return rows;
 };
 
+const getRandomInt = (min, max) => {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+};
+
+const generateMessageStringForInputFields = () => {
+  const channel = getRandomInt(1, 4);
+  const pitch = getRandomInt(1, 13);
+  const octave = getRandomInt(1, 8);
+  const length = 8;
+  return `${channel} ${pitch} ${octave} ${length}`;
+};
+
 export const makeSequencer = () => {
   const grid = makeGrid();
+  var exampleMessages = [];
+  for (let i = 0; i < grid.length; i++) {
+    exampleMessages.push(generateMessageStringForInputFields());
+  }
   const sequencer = document.getElementById("sequencer");
-  sequencer.innerHTML = "<p>sequencer, hit start to activate</p>";
+  sequencer.innerHTML =
+    "<p>sequences messages that broadcast to all clients, try editing or check <a href='/spec/'>the message spec</a></p>";
 
   // iterate through the grid
   grid.forEach((row, rowIndex) => {
@@ -73,6 +92,7 @@ export const makeSequencer = () => {
     });
     const msgField = document.createElement("input");
     msgField.type = "text";
+    msgField.value = exampleMessages[rowIndex];
     msgField.id = `sequencer-message-field-${rowIndex}`;
     seqRow.appendChild(msgField);
     sequencer.appendChild(seqRow);
