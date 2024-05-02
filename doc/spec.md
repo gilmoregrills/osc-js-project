@@ -55,6 +55,20 @@ Sets the volume of the channel, in decibels. The level is set -`<arg value>`, so
 
 `[y, x, 10]` to channel 0 will update the volume option group at `x` for channel `y` setting the volume to -10dB.
 
+#### bpm
+
+Sets the BPM of the global transport, controls the speed of the sequencer and ultimately affects quantization of notes triggered by incoming messages (once implemented).
+
+Because of limitations in ORCA, the BPM is set by combining the integers provided into one. See the example below for more info.
+
+
+| arg index | sets     | arg value | value                               |
+|-----------|----------|-----------|-------------------------------------|
+| 2 - 4     | bpm      | 0+        | combines each int provided into one |
+
+##### example
+
+`[y, x, 1, 2, 0]` to channel 0 will update the bpm option group at `x` for channel `y` setting the global BPM to 120.
 
 #### voice
 
