@@ -107,7 +107,7 @@ class InstrumentChannel extends Channel {
     const duration = Time(oscMsg.args[1][2] / 10).toNotation();
 
     const oscSynth = new this.voice({ volume: this.volume }).toDestination();
-    oscSynth.triggerAttackRelease(note, duration);
+    oscSynth.triggerAttackRelease(note, Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
     this.render();
@@ -198,7 +198,7 @@ class SynthChannel extends Channel {
       .connect(env)
       .start();
 
-    env.triggerAttackRelease(duration);
+    env.triggerAttackRelease(Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
     this.render();
