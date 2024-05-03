@@ -29,11 +29,6 @@ body {
   border-right: 1px solid #000;
 }
 
-.broadcast {
-  align-items: left;
-  border-right: 1px solid #000;
-}
-
 .footer {
     position: fixed;
     bottom: 0;
@@ -43,7 +38,7 @@ body {
     border-top: 1px solid #000;
 }
 
-.footer-content {
+.footer-content, .header-content {
   padding: 0px;
 }
 
@@ -68,4 +63,13 @@ form {
 input {
   padding: 0rem;
   height: 16px;
+}
+
+.header {
+  width: 100%;
+  border-bottom: 1px solid #000;
+}
+
+nav {
+  align: left;
 }

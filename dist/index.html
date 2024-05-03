@@ -6,12 +6,24 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <div class="header">
+      <div class="header-content">
+        <div class="grid-container">
+        <div class="nav">
+          <nav>
+            <a href="/about">about</a>
+            <a href="/api">api</a>
+            <a href="/spec">spec</a>
+            <a href="/logs">logs</a>
+          </nav>
+        </div>
+        </div>
+      </div>
+    </div>
     <div class="channels">
       <div class="grid-container" id="channel-container">
       </div>
     </div>
-
-
     <div class="footer">
       <div class="footer-content">
         <div class="grid-container">
@@ -21,7 +33,6 @@
               <button id="engine-start-button">start</button> the sequencer, audio engine, and open the websocket
             </p>
             <p>send OSC messages to port 57121, via the <a href="/api">api</a>, or using the field below</p>
-            <p><a href="/spec">message spec</a>   <a href="/api">api docs</a>
             <p id="sent-message"></p>
             <form id="broadcast-form">
               <input type="text" id="text-input-message-field" name="text-input-message-field" value="3 3 2 8">

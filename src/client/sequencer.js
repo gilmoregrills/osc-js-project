@@ -76,7 +76,7 @@ export const makeSequencer = () => {
   }
   const sequencer = document.getElementById("sequencer");
   sequencer.innerHTML =
-    "<p>sequences messages that broadcast to all clients, try editing or check <a href='/spec/'>the message spec</a></p>";
+    "<p>sequences <a href='/spec/'>messages</a> that broadcast to all clients</p>";
 
   // iterate through the grid
   grid.forEach((row, rowIndex) => {
