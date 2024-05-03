@@ -4,6 +4,7 @@ import { Channel, ControlChannel, allChannels } from "./channels";
 import { makeSequencer } from "./sequencer";
 import { WebSocketPort, timeTag } from "osc";
 import { messageStringToMessage } from "./utils";
+import { startWaveformLoop } from "./waveform";
 
 //setup websocket and OSC
 const wsUrl =
@@ -51,7 +52,6 @@ const startSequencerLoop = () => {
     beat = (beat + 1) % 8;
   };
 
-  Transport.bpm.value = 60;
   Transport.scheduleRepeat(repeat, "8n");
 };
 
@@ -66,6 +66,7 @@ window.onload = () => {
       console.log("OSC WebSocketPort opened");
       getDestination().volume.rampTo(-10, 0.001);
       startSequencerLoop();
+      startWaveformLoop();
       Transport.start();
     });
 

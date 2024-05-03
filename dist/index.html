@@ -8,7 +8,6 @@
   <body>
     <div class="header">
       <div class="header-content">
-        <div class="grid-container">
         <div class="nav">
           <nav>
             <a href="/about">about</a>
@@ -17,16 +16,14 @@
             <a href="/logs">logs</a>
           </nav>
         </div>
-        </div>
       </div>
     </div>
     <div class="channels">
-      <div class="grid-container" id="channel-container">
+      <div class="channels-content" id="channel-container">
       </div>
     </div>
     <div class="footer">
       <div class="footer-content">
-        <div class="grid-container">
           <div class="about">
             <p>osc-chat is a multiplayer OSC message receiver and sender</p>
             <p>
@@ -41,12 +38,15 @@
           </div>
           <div id="sequencer" class="sequencer">
           </div>
-          <div class="log">
-            <div id="log-messages" class="log-messages">
+          <div class="io">
+            <div class="log">
+              <div id="log-messages" class="log-messages">
+              </div>
+            </div>
+            <div id="waveform" class="waveform">
             </div>
           </div>
         </div>
-      </div>
     </div>
     <script src="bundle.js"></script>
   </body>
