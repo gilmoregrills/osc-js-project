@@ -19,6 +19,12 @@ module.exports = (app) => {
     res.send(marked.parse(file.toString()));
   });
 
+  app.get("/about", (req, res) => {
+    var path = __dirname + "/../../doc/about.md";
+    var file = readFileSync(path, "utf8");
+    res.send(marked.parse(file.toString()));
+  });
+
   app.post("/api/send-message", (req, res) => {
     console.log(
       `Received OSC message via API: ${req.body}, redirecting it to UDP port`,
