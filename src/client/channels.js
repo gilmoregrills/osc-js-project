@@ -216,7 +216,6 @@ class ControlChannel extends Channel {
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
       <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
-      <h3>global settings</h3>
       <h3>opt_group(1): bpm</h3>
       <p>bpm: ${this.getGlobalBpm()}</p>
     `;
