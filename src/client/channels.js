@@ -7,6 +7,7 @@ import {
   Transport,
 } from "tone";
 import { convertIntsToPitchOctave } from "./utils";
+import { updateInputMessageLog, updateOutputMessageLog } from "./logging";
 
 class Channel {
   constructor(address) {
@@ -96,7 +97,9 @@ class InstrumentChannel extends Channel {
   }
 
   updateLastMessageDescription(oscMsg, note, duration) {
-    this.lastMessageDescription = `${oscMsg.args[0]} played: ${note} for: ${duration}`;
+    const messageString = `${oscMsg.args[0]} played: ${note} for: ${duration} on ${this.address}`;
+    this.lastMessageDescription = messageString;
+    updateOutputMessageLog(messageString);
   }
 
   handle(oscMsg) {
@@ -176,7 +179,9 @@ class SynthChannel extends Channel {
   }
 
   updateLastMessageDescription(oscMsg, note, duration) {
-    this.lastMessageDescription = `${oscMsg.args[0]} played: ${note} for: ${duration}`;
+    const messageString = `${oscMsg.args[0]} played: ${note} for: ${duration} on ${this.address}`;
+    this.lastMessageDescription = messageString;
+    updateOutputMessageLog(messageString);
   }
 
   handle(oscMsg) {
@@ -321,6 +326,9 @@ export const allChannels = {
     const controlMessages = await response.json();
     controlMessages.controlMessages.forEach((oscMsg) => {
       this.channels[oscMsg.address].handle(oscMsg);
+      updateInputMessageLog(
+        `${oscMsg.args[0]}: ${JSON.stringify(oscMsg.args[1])} -> ${oscMsg.address}`,
+      );
     });
   },
 };

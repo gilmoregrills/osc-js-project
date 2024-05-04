@@ -1,5 +1,5 @@
 import { start, getDestination, Transport } from "tone";
-import { messageLog, updateMessageLog } from "./logging";
+import { updateInputMessageLog } from "./logging";
 import { Channel, ControlChannel, allChannels } from "./channels";
 import { makeSequencer } from "./sequencer";
 import { WebSocketPort, timeTag } from "osc";
@@ -19,7 +19,9 @@ console.log(`OSC WebSocketPort created on ${wsUrl}`);
 
 oscPort.on("message", (oscMsg) => {
   allChannels.channels[oscMsg.address].handle(oscMsg);
-  updateMessageLog(oscMsg);
+  updateInputMessageLog(
+    `${oscMsg.args[0]}: ${JSON.stringify(oscMsg.args[1])} -> ${oscMsg.address}`,
+  );
 });
 
 //setup channels

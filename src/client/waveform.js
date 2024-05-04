@@ -20,16 +20,19 @@ export const startWaveformLoop = () => {
   const canvas = makeCanvas();
   const ctx = canvas.getContext("2d");
   const midpt = canvas.height / 2;
-  const waveform = new Waveform(nearestPowerOf2(canvas.width));
+  const waveformWidth = nearestPowerOf2(canvas.width);
+  const waveformPointInterval = canvas.width / waveformWidth; // maybe -1
+  const waveform = new Waveform(waveformWidth);
   Master.connect(waveform);
 
   const repeat = (time) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const waveData = waveform.getValue();
-    console.log(waveData);
+    var x = 0;
     ctx.beginPath();
     waveData.forEach((val, index) => {
-      ctx.rect(index, midpt + val * midpt, 1, 1);
+      ctx.rect(x, midpt + val * midpt, 1, 1);
+      x += waveformPointInterval;
     });
     ctx.stroke();
   };

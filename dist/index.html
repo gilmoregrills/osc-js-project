@@ -29,7 +29,7 @@
             <p>
               <button id="engine-start-button">start</button> the sequencer, audio engine, and open the websocket
             </p>
-            <p>send OSC messages to port 57121, via the <a href="/api">api</a>, or using the field below</p>
+            <p>send OSC messages using ORCA to port 57121, using the sequencer, via the <a href="/api">api</a>, or using the field below</p>
             <p id="sent-message"></p>
             <form id="broadcast-form">
               <input type="text" id="text-input-message-field" name="text-input-message-field" value="3 3 2 8">
@@ -40,7 +40,9 @@
           </div>
           <div class="io">
             <div class="log">
-              <div id="log-messages" class="log-messages">
+              <div id="input-message-log" class="input-message-log">
+              </div>
+              <div id="output-message-log" class="output-message-log">
               </div>
             </div>
             <div id="waveform" class="waveform">

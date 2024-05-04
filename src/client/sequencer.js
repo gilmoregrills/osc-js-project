@@ -75,8 +75,6 @@ export const makeSequencer = () => {
     exampleMessages.push(generateMessageStringForInputFields());
   }
   const sequencer = document.getElementById("sequencer");
-  sequencer.innerHTML =
-    "<p>sequences <a href='/spec/'>messages</a> that broadcast to all clients</p>";
 
   // iterate through the grid
   grid.forEach((row, rowIndex) => {
