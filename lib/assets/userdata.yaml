@@ -46,7 +46,7 @@ runcmd:
 - sudo service nginx start
 - sudo /usr/bin/python3 -m pip install --upgrade pip
 - sudo /usr/bin/python3 -m pip install certbot certbot-nginx certbot-dns-route53
-- sudo /usr/local/bin/certbot --test-cert --nginx --non-interactive --agree-tos --email robinyonge@hey.com -d ${domain}
+- sudo /usr/local/bin/certbot --nginx --non-interactive --agree-tos --email robinyonge@hey.com -d ${domain}
 - sudo aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 553762194992.dkr.ecr.eu-west-2.amazonaws.com
 - sudo docker run -d -e NODE_ENV="production" -p 8080:8080 -p 8081:8081 -p 57121:57121/udp --restart always ${docker_image}
 - echo "0 0,12 * * * root /usr/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo /usr/local/bin/certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
