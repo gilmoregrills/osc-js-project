@@ -13,18 +13,17 @@ multiplayer osc message sequencer, receiver, and sound generator
 - [x] start persisting channel config to a db (must be done entirely server-side) and loading from it on startup
 - [ ] add global settings (time sig?? bpm??) to option groups in control channel
 - [ ] add effects to channels, or a way of adding/confguring effects
-- [ ] display all logs at /logs
-- [ ] quantize messages that trigger sound
+- [x] quantize messages that trigger sound
 - [ ] add more voices to the instrument channels
 - [ ] add a second synth channel
 - [x] assign new connections a randomly generated username based on IP and include that username in the logs
 - [x] OPTIONAL (if possible): persist that username between sessions somehow?
-- [ ] add some visual feedback on channels when a sound is produced
+- [x] add some visual feedback on channels when a sound is produced
 - [ ] add some visual feedback on channels when settings are changed
 - [ ] improve overall visual design
 - [ ] change the way user names are set, so that messages from the inbuilt sequencer from different clients can be distinguished
 - [ ] add a message explainer, either to the input box of the sequencer or on a separate page (message spec docs page?)
-- [ ] add a documentation nav bar
+- [x] add a documentation nav bar
 
 ### channel types
 
@@ -34,8 +33,23 @@ multiplayer osc message sequencer, receiver, and sound generator
 - [ ] sampler channel with configurable samples for each note
 - [ ] ???
 
+## Decisions
 
-## running locally
+### Message format
+
+The messages all have to be ORCA comatible for no other reason other than that I like it and want to use it. ORCA only lets you send numbers, so osc-chat accepts only numbers.
+
+### Channel configuration
+
+Configuration is saved to the channels and not done live on each message to encourage interference between users.
+
+### State
+
+Because messages are broadcast to all clients, any configuration changes are also broadcast to all clients. This makes it hard to persist configuration state between connections, because writing from the client side would result in multiple redundant writes. Instead, the server stores the most recent configuration message of each type, and sends them all as a batch to new clients when they connect.
+
+## development
+
+### running locally
 
 always:
 ```bash
@@ -43,13 +57,13 @@ yarn install
 yarn build
 ```
 
-### without docker
+#### without docker
 
 ```bash
 yarn run start
 ```
 
-### with docker
+#### with docker
 
 ```bash
 yarn run build:docker
@@ -59,7 +73,7 @@ yarn run start:docker
 
 then go to `http://localhost:8080` in your browser, or send OSC messages to `localhost:57121`
 
-## deploying to aws
+### deploying to aws
 
 log in to the right aws account, then run:
 

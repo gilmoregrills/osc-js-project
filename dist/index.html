@@ -11,9 +11,9 @@
         <div class="nav">
           <nav>
             <a href="/about">about</a>
-            <a href="/api">api</a>
             <a href="/spec">spec</a>
-            <a href="/logs">logs</a>
+            <a href="/sequencer">sequencer</a>
+            <a href="/api">api</a>
           </nav>
         </div>
       </div>
@@ -29,7 +29,7 @@
             <p>
               <button id="engine-start-button">start</button> the sequencer, audio engine, and open the websocket
             </p>
-            <p>send OSC messages using ORCA to port 57121, using the sequencer, via the <a href="/api">api</a>, or using the field below</p>
+          <p>send OSC <a href="/spec">messages</a> using <a href="https://github.com/hundredrabbits/Orca">ORCA</a> to port 57121, using the <a href="/sequencer">sequencer</a>, via the <a href="/api">api</a>, or using the field below</p>
             <p id="sent-message"></p>
             <form id="broadcast-form">
               <input type="text" id="text-input-message-field" name="text-input-message-field" value="3 3 2 8">
