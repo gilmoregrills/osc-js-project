@@ -245,6 +245,10 @@ class ControlChannel extends Channel {
     );
 
     const channel = allChannels.channels[`/${oscMsg.args[1][0]}`];
+    if (channel === undefined) {
+      console.log("Invalid channel address");
+      return;
+    }
     var actionMessage = "";
 
     if (channel instanceof InstrumentChannel) {
@@ -309,8 +313,7 @@ export const allChannels = {
   channels: {
     "/0": new ControlChannel("/0"),
     "/1": new InstrumentChannel("/1", Synth, "osc synth"),
-    "/2": new InstrumentChannel("/2", MembraneSynth, "membrane synth"),
-    "/3": new SynthChannel("/3", "sine"),
+    "/2": new SynthChannel("/2", "sine"),
   },
 
   async initialise() {

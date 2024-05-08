@@ -61,7 +61,7 @@ const getRandomInt = (min, max) => {
 };
 
 const generateMessageStringForInputFields = () => {
-  const channel = getRandomInt(1, 4);
+  const channel = getRandomInt(1, 3);
   const pitch = getRandomInt(1, 13);
   const octave = getRandomInt(1, 8);
   const length = 8;
