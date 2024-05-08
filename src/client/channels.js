@@ -5,6 +5,7 @@ import {
   AmplitudeEnvelope,
   Time,
   Transport,
+  Reverb,
 } from "tone";
 import { convertIntsToPitchOctave } from "./utils";
 import { updateInputMessageLog, updateOutputMessageLog } from "./logging";
@@ -210,6 +211,58 @@ class SynthChannel extends Channel {
   }
 }
 
+class EffectChannel extends Channel {
+  constructor(address, effect, effectName) {
+    super(address);
+    this.effect = effect;
+    this.effectName = effectName;
+    this.channelType = "effect";
+    this.lastMessageDescription = "awaiting input";
+  }
+
+  setEffect(arg) {
+    const [effectName, effect] = this.mapArgToEffect(arg);
+    this.effectName = effectName;
+    this.effect = effect;
+  }
+
+  mapArgToEffect(arg) {
+    switch (arg) {
+      case 1:
+        return ["reverb", Reverb];
+        break;
+      default:
+        return ["reverb", Reverb];
+    }
+  }
+
+  generateInnerHTML() {
+    return `
+      <h2>channel:${this.address}</h2>
+      <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(1): effect</h3>
+      <p id="effect_${this.address}">effect: ${this.effectName}</p>
+      <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
+    `;
+  }
+
+  updateLastMessageDescription(oscMsg, note, duration) {
+    const messageString = `Received message: ${JSON.stringify(oscMsg)} on ${this.address}, which currently does nothing.`;
+    this.lastMessageDescription = messageString;
+    updateOutputMessageLog(messageString);
+  }
+
+  handle(oscMsg) {
+    console.log(
+      `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
+    );
+    const effect = new this.effect().toDestination();
+
+    this.updateLastMessageDescription(oscMsg);
+    this.render();
+  }
+}
+
 class ControlChannel extends Channel {
   constructor(address) {
     super(address, Synth);
@@ -297,6 +350,15 @@ class ControlChannel extends Channel {
         default:
           console.log("Invalid option group");
       }
+    } else if (channel instanceof EffectChannel) {
+      switch (oscMsg.args[1][1]) {
+        case 1:
+          channel.setEffect(oscMsg.args[1][2]);
+          actionMessage = `effect: ${channel.effectName}`;
+          break;
+        default:
+          console.log("Invalid option group");
+      }
     }
 
     channel.render();
@@ -314,6 +376,7 @@ export const allChannels = {
     "/0": new ControlChannel("/0"),
     "/1": new InstrumentChannel("/1", Synth, "osc synth"),
     "/2": new SynthChannel("/2", "sine"),
+    "/3": new EffectChannel("/3", Reverb, "reverb"),
   },
 
   async initialise() {
