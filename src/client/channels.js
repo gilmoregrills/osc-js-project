@@ -16,6 +16,7 @@ class Channel {
     this.channelType = "generic";
     this.volume = -8;
     this.lastMessageDescription = "awaiting input";
+    this.effectsChain = [];
   }
 
   setVolume(vol) {
@@ -34,6 +35,12 @@ class Channel {
   render() {
     const channelDiv = document.getElementById(`channel_${this.address}`);
     channelDiv.innerHTML = this.generateInnerHTML();
+  }
+
+  renderEffectsChainAsHTML() {
+    return this.effectsChain
+      .map((effect) => `<p>${effect.effectName}</p>`)
+      .join("");
   }
 
   initialise() {
@@ -89,6 +96,8 @@ class InstrumentChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(0): effects</h3>
+      ${this.renderEffectsChainAsHTML()}
       <h3>opt_group(1): vol</h3>
       <p id="vol_${this.address}">volume: ${this.volume}dB</p>
       <h3>opt_group(2): voice</h3>
@@ -111,6 +120,10 @@ class InstrumentChannel extends Channel {
     const duration = Time(oscMsg.args[1][2] / 10).toNotation();
 
     const oscSynth = new this.voice({ volume: this.volume }).toDestination();
+
+    const effects = this.effectsChain.map((effect) => effect.getEffect());
+
+    oscSynth.chain(...effects);
     oscSynth.triggerAttackRelease(note, Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
@@ -169,6 +182,8 @@ class SynthChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(0): effects</h3>
+      ${this.renderEffectsChainAsHTML()}
       <h3>opt_group(1): vol</h3>
       <p id="vol_${this.address}">volume: ${this.volume}dB</p>
       <h3>opt_group(2): waveform</h3>
@@ -200,10 +215,12 @@ class SynthChannel extends Channel {
       volume: this.volume,
       frequency: note,
       type: this.waveform,
-    })
-      .connect(env)
-      .start();
+    });
 
+    const effects = this.effectsChain.map((effect) => effect.getEffect());
+
+    osc.chain(...effects, env);
+    osc.start();
     env.triggerAttackRelease(Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
@@ -236,30 +253,24 @@ class EffectChannel extends Channel {
     }
   }
 
+  // do any effect specific setup here
+  getEffect() {
+    return new this.effect();
+  }
+
   generateInnerHTML() {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
       <h3>opt_group(1): effect</h3>
       <p id="effect_${this.address}">effect: ${this.effectName}</p>
-      <p id="last_msg_desc_${this.address}">${this.lastMessageDescription}</p>
     `;
-  }
-
-  updateLastMessageDescription(oscMsg, note, duration) {
-    const messageString = `Received message: ${JSON.stringify(oscMsg)} on ${this.address}, which currently does nothing.`;
-    this.lastMessageDescription = messageString;
-    updateOutputMessageLog(messageString);
   }
 
   handle(oscMsg) {
     console.log(
-      `This is channel: ${this.address} handling the message: ${JSON.stringify(oscMsg)}`,
+      `This is channel: ${this.address}, channels of type effect don't handle messages directly.`,
     );
-    const effect = new this.effect().toDestination();
-
-    this.updateLastMessageDescription(oscMsg);
-    this.render();
   }
 }
 
@@ -281,6 +292,12 @@ class ControlChannel extends Channel {
 
   updateLastMessageDescription(channel, action, name) {
     this.lastMessageDescription = `${name} set:channel:${channel} to: ${action}`;
+  }
+
+  setEffectsChainForChannel(channel, effects) {
+    effects.forEach((effect) => {
+      channel.effectsChain.push(allChannels.channels[`/${effect}`]);
+    });
   }
 
   getGlobalBpm() {
@@ -306,6 +323,11 @@ class ControlChannel extends Channel {
 
     if (channel instanceof InstrumentChannel) {
       switch (oscMsg.args[1][1]) {
+        case 0:
+          this.setEffectsChainForChannel(channel, oscMsg.args[1].slice(2));
+          actionMessage = `effects: ${channel.effectsChain.map(
+            (effect) => effect.effectName,
+          )}`;
         case 1:
           channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
@@ -319,6 +341,11 @@ class ControlChannel extends Channel {
       }
     } else if (channel instanceof SynthChannel) {
       switch (oscMsg.args[1][1]) {
+        case 0:
+          this.setEffectsChainForChannel(channel, oscMsg.args[1].slice(2));
+          actionMessage = `effects: ${channel.effectsChain.map(
+            (effect) => effect.effectName,
+          )}`;
         case 1:
           channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
@@ -351,14 +378,7 @@ class ControlChannel extends Channel {
           console.log("Invalid option group");
       }
     } else if (channel instanceof EffectChannel) {
-      switch (oscMsg.args[1][1]) {
-        case 1:
-          channel.setEffect(oscMsg.args[1][2]);
-          actionMessage = `effect: ${channel.effectName}`;
-          break;
-        default:
-          console.log("Invalid option group");
-      }
+      channel.handle(oscMsg);
     }
 
     channel.render();
