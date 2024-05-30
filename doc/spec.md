@@ -15,7 +15,7 @@ The address field is always an integer that corresponds to the channel number.
 
 The args field is always an array of ints, which are interpreted in different ways depending on the channel. This spec describes the function of each argument by array index, starting with 0 as per.
 
-## channel 0
+## channel 0 / control channel
 
 Channel 0 is always a control channel that accepts messages that modify settings on other channels.
 
@@ -134,7 +134,7 @@ Sets the wet/dry-ness of the effect channel, to the value passed as an argument,
 
 Channels 1 and up are controlled by sending messages to the address that corresponds with the channel number.
 
-### synth/instrument channels
+### synth & instrument channels
 
 Instrument channels are initialised with a voice, visible in the column for that channel, which can be changed by sending a message to channel 0 as described above.
 
@@ -155,6 +155,12 @@ This sends a message with the args `[1, 2, 3]` to channel 1.
   'args': [1, 2, 3]
 }
 ```
+
+### effects channels
+
+Effects channels contain pre-set effects that can be applied to other channels. The effect for the channel can't be changed, but the settings for the effect can be modified in the same way that the settings for other channels can be modified, by sending messages to the control channel to modify the different opt groups.
+
+Messages can't be set directly to effect channels, they're only interacted with through the control channel, either via modifying the effect's settings or by applying the effect to another channel.
 
 ### pitch map
 
