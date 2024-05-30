@@ -18,7 +18,9 @@ var oscPort = new WebSocketPort({
 console.log(`OSC WebSocketPort created on ${wsUrl}`);
 
 oscPort.on("message", (oscMsg) => {
-  allChannels.channels[oscMsg.address].handle(oscMsg);
+  allChannels.channels[oscMsg.address]?.handle(oscMsg) ||
+    console.log(`Channel not found: ${oscMsg.address}`);
+
   updateInputMessageLog(
     `${oscMsg.args[0]}: ${JSON.stringify(oscMsg.args[1])} -> ${oscMsg.address}`,
   );

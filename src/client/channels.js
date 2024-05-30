@@ -5,6 +5,7 @@ import {
   AmplitudeEnvelope,
   Time,
   Transport,
+  Reverb,
 } from "tone";
 import { convertIntsToPitchOctave } from "./utils";
 import { updateInputMessageLog, updateOutputMessageLog } from "./logging";
@@ -15,6 +16,7 @@ class Channel {
     this.channelType = "generic";
     this.volume = -8;
     this.lastMessageDescription = "awaiting input";
+    this.effectsChain = [];
   }
 
   setVolume(vol) {
@@ -33,6 +35,12 @@ class Channel {
   render() {
     const channelDiv = document.getElementById(`channel_${this.address}`);
     channelDiv.innerHTML = this.generateInnerHTML();
+  }
+
+  renderEffectsChainAsHTML() {
+    return this.effectsChain
+      .map((effect) => `<p>${effect.effectName}</p>`)
+      .join("");
   }
 
   initialise() {
@@ -88,6 +96,8 @@ class InstrumentChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(0): effects</h3>
+      ${this.renderEffectsChainAsHTML()}
       <h3>opt_group(1): vol</h3>
       <p id="vol_${this.address}">volume: ${this.volume}dB</p>
       <h3>opt_group(2): voice</h3>
@@ -110,6 +120,10 @@ class InstrumentChannel extends Channel {
     const duration = Time(oscMsg.args[1][2] / 10).toNotation();
 
     const oscSynth = new this.voice({ volume: this.volume }).toDestination();
+
+    const effects = this.effectsChain.map((effect) => effect.getEffect());
+
+    oscSynth.chain(...effects);
     oscSynth.triggerAttackRelease(note, Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
@@ -168,6 +182,8 @@ class SynthChannel extends Channel {
     return `
       <h2>channel:${this.address}</h2>
       <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(0): effects</h3>
+      ${this.renderEffectsChainAsHTML()}
       <h3>opt_group(1): vol</h3>
       <p id="vol_${this.address}">volume: ${this.volume}dB</p>
       <h3>opt_group(2): waveform</h3>
@@ -199,14 +215,89 @@ class SynthChannel extends Channel {
       volume: this.volume,
       frequency: note,
       type: this.waveform,
-    })
-      .connect(env)
-      .start();
+    });
 
+    const effects = this.effectsChain.map((effect) => effect.getEffect());
+
+    osc.chain(...effects, env);
+    osc.start();
     env.triggerAttackRelease(Time(duration).quantize("8n"));
 
     this.updateLastMessageDescription(oscMsg, note, duration);
     this.render();
+  }
+}
+
+class EffectChannel extends Channel {
+  constructor(address, effect, effectName) {
+    super(address);
+    this.effect = effect;
+    this.effectName = effectName;
+    this.channelType = "effect";
+  }
+
+  // do any effect specific setup here
+  getEffect() {
+    return new this.effect();
+  }
+
+  generateInnerHTML() {
+    return `
+      <h2>channel:${this.address}</h2>
+      <p>channel type: ${this.channelType}</p>
+      <h3>opt_group(1): effect</h3>
+      <p id="effect_${this.address}">effect: ${this.effectName}</p>
+    `;
+  }
+
+  handle(oscMsg) {
+    console.log(
+      `This is channel: ${this.address}, channels of type effect don't handle messages directly.`,
+    );
+  }
+}
+
+class ReverbChannel extends EffectChannel {
+  constructor(address) {
+    super(address, Reverb, "reverb");
+    this.decayTime = new Time("10s");
+    this.wetness = 1;
+  }
+
+  getEffect() {
+    return new this.effect({
+      decay: this.decayTime,
+      wet: this.wetness,
+    });
+  }
+
+  setDecayTime(args) {
+    this.decayTime = new Time(args[0] / 10);
+  }
+
+  getDecayTimeAsNotation() {
+    return this.decayTime.toNotation();
+  }
+
+  setWetness(args) {
+    this.wetness = args[0] / 10;
+  }
+
+  generateInnerHTML() {
+    return `
+      <h2>channel:${this.address}</h2>
+      <p>channel type: ${this.channelType}/${this.effectName}</p>
+      <h3>opt_group(1): decay</h3>
+      <p id="decay_${this.address}">decay: ${this.getDecayTimeAsNotation()}</p>
+      <h3>opt_group(2): wetness</h3>
+      <p id="wetness_${this.address}">wetness: ${this.wetness}</p>
+    `;
+  }
+
+  handle(oscMsg) {
+    console.log(
+      `This is channel: ${this.address}, channels of type effect don't handle messages directly.`,
+    );
   }
 }
 
@@ -230,6 +321,16 @@ class ControlChannel extends Channel {
     this.lastMessageDescription = `${name} set:channel:${channel} to: ${action}`;
   }
 
+  setEffectsChainForChannel(channel, effects) {
+    channel.effectsChain = [];
+    if (effects.length === 0) {
+      return;
+    }
+    effects.forEach((effect) => {
+      channel.effectsChain.push(allChannels.channels[`/${effect}`]);
+    });
+  }
+
   getGlobalBpm() {
     return Transport.bpm.value;
   }
@@ -245,10 +346,19 @@ class ControlChannel extends Channel {
     );
 
     const channel = allChannels.channels[`/${oscMsg.args[1][0]}`];
+    if (channel === undefined) {
+      console.log("Invalid channel address");
+      return;
+    }
     var actionMessage = "";
 
     if (channel instanceof InstrumentChannel) {
       switch (oscMsg.args[1][1]) {
+        case 0:
+          this.setEffectsChainForChannel(channel, oscMsg.args[1].slice(2));
+          actionMessage = `effects: ${channel.effectsChain.map(
+            (effect) => effect.effectName,
+          )}`;
         case 1:
           channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
@@ -262,6 +372,11 @@ class ControlChannel extends Channel {
       }
     } else if (channel instanceof SynthChannel) {
       switch (oscMsg.args[1][1]) {
+        case 0:
+          this.setEffectsChainForChannel(channel, oscMsg.args[1].slice(2));
+          actionMessage = `effects: ${channel.effectsChain.map(
+            (effect) => effect.effectName,
+          )}`;
         case 1:
           channel.setVolume(oscMsg.args[1][2]);
           actionMessage = `volume: ${channel.volume}`;
@@ -293,6 +408,19 @@ class ControlChannel extends Channel {
         default:
           console.log("Invalid option group");
       }
+    } else if (channel instanceof EffectChannel) {
+      switch (oscMsg.args[1][1]) {
+        case 1:
+          channel.setDecayTime(oscMsg.args[1].slice(2));
+          actionMessage = `decay: ${channel.getDecayTimeAsNotation()}`;
+          break;
+        case 2:
+          channel.setWetness(oscMsg.args[1].slice(2));
+          actionMessage = `wetness: ${channel.wetness}`;
+          break;
+        default:
+          console.log("Invalid option group");
+      }
     }
 
     channel.render();
@@ -309,8 +437,8 @@ export const allChannels = {
   channels: {
     "/0": new ControlChannel("/0"),
     "/1": new InstrumentChannel("/1", Synth, "osc synth"),
-    "/2": new InstrumentChannel("/2", MembraneSynth, "membrane synth"),
-    "/3": new SynthChannel("/3", "sine"),
+    "/2": new SynthChannel("/2", "sine"),
+    "/3": new ReverbChannel("/3"),
   },
 
   async initialise() {

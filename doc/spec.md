@@ -112,9 +112,25 @@ Each option is set to the value passed to that argument, divided by 10.
 
 ##### example
 
-`[y, x, 1, 5, 20, 30, 40]` would update the envelope option group at `x` for channel `y`, setting the envelope to attack 0.5s, decay 2s, sustain 3s, and release 4s.
+`[y, x, 1, 5, 20, 30, 40]` to channel 0 would update the envelope option group at `x` for channel `y`, setting the envelope to attack 0.5s, decay 2s, sustain 3s, and release 4s.
 
-## channels 1+
+#### decay
+
+If the channel has an option group just for the decay, sets the decay for that channel (currently this only applies to the Reverb channel) to the value passed as an argument, divided by 10.
+
+##### example
+
+`[y, x, 5]` to channel 0 would update the decay option group at `x` for channel `y`, setting the decay to 0.5s / 4n.
+
+#### wetness
+
+Sets the wet/dry-ness of the effect channel, to the value passed as an argument, divided by 10. A wetness of 1 means the full effect is applied to channels that the effect is applied to, a wetness of 0 means no effect is applied.
+
+##### example
+
+`[y, x, 5]` to channel 0 would update the wetness option group at `x` for channel `y`, setting the wetness to 0.5.
+
+## instrument, synth channels
 
 Channels 1 and up are controlled by sending messages to the address that corresponds with the channel number.
 
